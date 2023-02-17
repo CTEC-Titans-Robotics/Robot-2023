@@ -113,7 +113,7 @@ public class Swerve extends SubsystemBase {
         })
         .withName("TeleopSwerve");
   }
-
+  // Appears to be a pathfinder autonomous related command.
   public Command followTrajectory(PathPlannerTrajectory trajectory, boolean firstPath) {
     return Commands.sequence(
         run(
@@ -133,7 +133,7 @@ public class Swerve extends SubsystemBase {
             this),
         this.drive(() -> 0.0, () -> 0.0, () -> 0.0));
   }
-
+//Main drive function which will be called in TelopSwerve
   public void drive(
       Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates =
@@ -201,7 +201,7 @@ public class Swerve extends SubsystemBase {
         ? Rotation2d.fromDegrees(360 - gyro.getYaw())
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
-
+//periodic function updates all values
   @Override
   public void periodic() {
     poseEstimator.update(getYaw(), getPositions());

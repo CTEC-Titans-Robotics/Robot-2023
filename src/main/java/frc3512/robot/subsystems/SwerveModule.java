@@ -53,6 +53,8 @@ public class SwerveModule {
    * @param moduleNumber - Number of the module (0-3)
    * @param moduleIO - Module IO for the appropriate module
    */
+
+  //Class takes a intetger for use in an array and the modules constants define the can id's of all module devices
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
     this.moduleNumber = moduleNumber;
     angleOffset = moduleConstants.angleOffset;

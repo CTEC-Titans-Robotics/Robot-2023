@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.auton.Autos;
+import frc3512.robot.subsystems.Arm;
+import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
 
 public class Robot2023 {
@@ -20,17 +22,21 @@ public class Robot2023 {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+  private Arm arm = new Arm();
+  private Claw claw = new Claw();
+
   // Joysticks
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
-  private final CommandJoystick appendage =
-      new CommandJoystick(Constants.OperatorConstants.appendageControllerPort);
+  private final CommandXboxController appendage =
+      new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
 
   /** Used for defining button actions. */
   public void configureButtonBindings() {
 
     /* Driver Buttons */
     driver.x().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
+    appendage.b().onTrue(new InstantCommand(() -> claw.toggleClaw()));
   }
 
   /** Used for joystick/xbox axis actions. */
@@ -40,6 +46,15 @@ public class Robot2023 {
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
             () -> -driver.getRawAxis(rotationAxis)));
+    arm.setDefaultCommand(arm.move(
+            appendage::getLeftY,
+            null,
+            null
+    ));
+  }
+
+  public Arm getArm() {
+    return arm;
   }
 
   /**
