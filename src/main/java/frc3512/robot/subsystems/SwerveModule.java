@@ -27,7 +27,7 @@ import frc3512.robot.Constants;
 public class SwerveModule {
   public int moduleNumber;
   private Rotation2d lastAngle;
-  private Rotation2d angleOffset;
+  private double angleOffset;
 
   private CANSparkMax angleMotor;
   private CANSparkMax driveMotor;
@@ -143,7 +143,8 @@ public class SwerveModule {
   }
 
   public void resetAbsolute() {
-    double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
+    angleEncoder.configFactoryDefault();
+    double absolutePosition = getPosCanCoder() - angleOffset;
     angleEncoder.setPosition(absolutePosition);
   }
 
@@ -195,12 +196,53 @@ public class SwerveModule {
     return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
   }
 
-  public Rotation2d getCanCoder() {
-    return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
-  }
+  // public Rotation2d getCanCoder() {
+  //   return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+  // }
 
   public double getPosCanCoder() {
-    return angleEncoder.getAbsolutePosition();
+    // return angleEncoder.getAbsolutePosition();
+
+    // copied from how many layers of copying by Ryan
+    readingError = false;
+    MagnetFieldStrength strength = angleEncoder.getMagnetFieldStrength();
+
+    if (strength != MagnetFieldStrength.Good_GreenLED) {
+      DriverStation.reportWarning(
+          "CANCoder " + angleEncoder.getDeviceID() + " magnetic field is less than ideal.\n", false);
+    }
+    if (strength == MagnetFieldStrength.Invalid_Unknown
+        || strength == MagnetFieldStrength.BadRange_RedLED) {
+      readingError = true;
+      DriverStation.reportWarning(
+          "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty.\n", false);
+      return 0;
+    }
+    double angle = angleEncoder.getAbsolutePosition();
+
+    // Taken from democat's library.
+    // Source:
+    // https://github.com/democat3457/swerve-lib/blob/7c03126b8c22f23a501b2c2742f9d173a5bcbc40/src/main/java/com/swervedrivespecialties/swervelib/ctre/CanCoderFactoryBuilder.java#L51-L74
+    ErrorCode code = angleEncoder.getLastError();
+    int ATTEMPTS = 3;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      if (code == ErrorCode.OK) {
+        break;
+      }
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+      }
+      angle = angleEncoder.getAbsolutePosition();
+      code = angleEncoder.getLastError();
+    }
+    if (code != ErrorCode.OK) {
+      readingError = true;
+      DriverStation.reportWarning(
+          "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty, ignoring.\n", false);
+    }
+
+    return angle;
   }
 
   public double getDriveVelocity() {

@@ -1,8 +1,6 @@
-# FRC Team 3512's 2023 Robot
+# FRC Team 8768's 2023 Robot
 
-Source code for the 2023 comp robot: TBD
-
-Source code also for the 2023 practice robot: TBD
+* Forked from Team 3512's rewrite of Team 364's BaseFalconSwerve *
 
 ## Setup
 
