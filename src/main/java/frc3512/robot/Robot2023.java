@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.auton.Autos;
 import frc3512.robot.subsystems.Arm;
+import frc3512.robot.subsystems.ArmExtension;
 import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
 
@@ -27,6 +28,7 @@ public class Robot2023 {
 
   private Arm arm = new Arm();
   public Claw claw = new Claw();
+  public ArmExtension extension = new ArmExtension();
 
   // Joysticks
   private final CommandXboxController driver =
@@ -41,6 +43,15 @@ public class Robot2023 {
     driver.x().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
     /* CoDriver Buttons*/
     appendage.b().onTrue(new InstantCommand(() -> claw.toggleClaw()));
+    appendage.leftBumper().whileTrue(arm.simpleArmNegativeMovement(arm.reachedMinSup));
+    appendage.rightBumper().whileTrue(arm.simpleArmPositiveMovement(arm.reachedMaxSup));
+    appendage.leftBumper().onFalse(arm.stopMovementCommand());
+    appendage.rightBumper().onFalse(arm.stopMovementCommand());
+
+    appendage.rightTrigger().onTrue(extension.positiveMovement(extension.reachedMaxSup));
+    appendage.leftTrigger().onTrue(extension.negativeMovement(extension.reachedMinSup));
+    appendage.rightTrigger().onFalse(extension.stopMovementCommand());
+    appendage.leftTrigger().onFalse(extension.stopMovementCommand());
   }
 
   /** Used for joystick/xbox axis actions. */

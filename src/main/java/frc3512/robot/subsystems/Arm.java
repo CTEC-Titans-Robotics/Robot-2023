@@ -15,7 +15,6 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.CAN;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -54,8 +53,6 @@ public class Arm extends SubsystemBase {
     private static double minPos = -180;
     private static double maxPos = 10;
     private static double angleCANOffset = 27.58;
-
-    private static XboxController coDriver = new XboxController(Constants.OperatorConstants.appendageControllerPort);
 
     public static double armAngle;
     public boolean reachedMax;
@@ -209,16 +206,31 @@ private void configAngleEncoder() {
 
         // PID CODE END
 
-        if(!reachedMax && coDriver.getRightBumper()) {
-            leaderMotor.set(0.05);
-        } else if(reachedMax || !coDriver.getRightBumper()) {
-            leaderMotor.set(0);
-        }
-
-        if(!reachedMin && coDriver.getLeftBumper()) {
-            leaderMotor.set(-0.05);
-        } else if(reachedMin || !coDriver.getLeftBumper()) {
-            leaderMotor.set(0);
-        }
     } 
+    public Command simpleArmPositiveMovement(BooleanSupplier max){
+        return run(() -> {
+            if(!max.getAsBoolean()) {
+                leaderMotor.set(0.05);
+            } else {
+                stopMovement();
+            }
+        });
+    }
+    public Command simpleArmNegativeMovement(BooleanSupplier min){
+        return run(() -> {
+            if(!min.getAsBoolean()) {
+                leaderMotor.set(-0.05);
+            } else {
+                stopMovement();
+            }
+        });
+    }
+
+    public void stopMovement() {
+        leaderMotor.set(0);
+    }
+
+    public Command stopMovementCommand() {
+        return run(() -> leaderMotor.set(0));
+    }
 }

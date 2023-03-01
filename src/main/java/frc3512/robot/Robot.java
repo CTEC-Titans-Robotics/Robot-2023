@@ -7,6 +7,7 @@ package frc3512.robot;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc3512.lib.logging.SpartanLogManager;
@@ -85,6 +86,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_robot.extension.zeroingProtocall();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -94,20 +96,22 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robot.getArm().periodic();
+    m_robot.extension.periodic();
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    
+
+    //m_robot.extension.zeroingProtocall();   
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    Arm.leaderMotor.set(-.05);
     //ArmExtension.extension.set(.05)
+    m_robot.extension.periodic(); 
   }
 
   /** This function is called once when the robot is first started up. */
