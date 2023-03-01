@@ -4,7 +4,8 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
-import com.ctre.phoenix.sensors.WPI_CANCoder;
+//import com.ctre.phoenix.sensors.WPI_CANCoder;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -33,7 +34,7 @@ public class SwerveModule {
 
   private RelativeEncoder driveEncoder;
   private RelativeEncoder integratedAngleEncoder;
-  private WPI_CANCoder angleEncoder;
+  private CANCoder angleEncoder;
 
   private final SparkMaxPIDController driveController;
   private final SparkMaxPIDController angleController;
@@ -60,7 +61,7 @@ public class SwerveModule {
     angleOffset = moduleConstants.angleOffset;
 
     /* Angle Encoder Config */
-    angleEncoder = new WPI_CANCoder(moduleConstants.cancoderID);
+    angleEncoder = new CANCoder(moduleConstants.cancoderID);
     configAngleEncoder();
 
     /* Angle Motor Config */
@@ -76,6 +77,13 @@ public class SwerveModule {
     configDriveMotor();
 
     lastAngle = getState().angle;
+  }
+
+  public CANSparkMax getTurnMotor() {
+    return angleMotor;
+  }
+  public CANSparkMax getDriveMotor() {
+    return driveMotor;
   }
 
   private void configAngleEncoder() {
@@ -159,7 +167,15 @@ public class SwerveModule {
     }
   }
 
-  private void setAngle(SwerveModuleState desiredState) {
+  void setCalibrateAngle(SwerveModuleState desiredState) {
+    // Prevent rotating module if speed is less then 1%. Prevents jittering.
+    Rotation2d angle = desiredState.angle;
+
+    angleController.setReference(angle.getDegrees(), ControlType.kPosition);
+    lastAngle = angle;
+  }
+
+  void setAngle(SwerveModuleState desiredState) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
     Rotation2d angle =
         (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01))
@@ -181,6 +197,10 @@ public class SwerveModule {
 
   public Rotation2d getCanCoder() {
     return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+  }
+
+  public double getPosCanCoder() {
+    return angleEncoder.getAbsolutePosition();
   }
 
   public double getDriveVelocity() {

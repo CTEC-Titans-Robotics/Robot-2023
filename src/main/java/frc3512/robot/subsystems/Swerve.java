@@ -68,6 +68,19 @@ public class Swerve extends SubsystemBase {
         };
 
     Timer.delay(1.0);
+
+    //New code that moves modules to angle offsets at before periodic
+    /*SwerveModuleState SwerveModuleState0 = new SwerveModuleState(0, Constants.SwerveConstants.Mod0.constants.angleOffset);
+    SwerveModuleState SwerveModuleState1 = new SwerveModuleState(0, Constants.SwerveConstants.Mod1.constants.angleOffset); 
+    SwerveModuleState SwerveModuleState2 = new SwerveModuleState(0, Constants.SwerveConstants.Mod2.constants.angleOffset); 
+    SwerveModuleState SwerveModuleState3 = new SwerveModuleState(0, Constants.SwerveConstants.Mod3.constants.angleOffset); 
+    mSwerveMods[0].setCalibrateAngle(SwerveModuleState0);
+    mSwerveMods[1].setCalibrateAngle(SwerveModuleState1);
+    mSwerveMods[2].setCalibrateAngle(SwerveModuleState2);
+    mSwerveMods[3].setCalibrateAngle(SwerveModuleState3);
+    //Timer.delay(10);*/
+    //end of new code
+
     resetModuleZeros();
 
     poseEstimator =
@@ -86,6 +99,19 @@ public class Swerve extends SubsystemBase {
         new SpartanDoubleArrayEntry("/Diagnostics/Swerve/Modules/Drive Velocity");
     moduleDrivePositions =
         new SpartanDoubleArrayEntry("/Diagnostics/Swerve/Modules/Drive Positions");
+
+    //inverts left side Turn motors
+    mSwerveMods[0].getTurnMotor().setInverted(true);
+    mSwerveMods[2].getTurnMotor().setInverted(true);
+    //inverts right side Turn Motors
+    mSwerveMods[1].getTurnMotor().setInverted(true);
+    mSwerveMods[3].getTurnMotor().setInverted(true);
+
+    mSwerveMods[0].getDriveMotor().setInverted(false);
+    mSwerveMods[2].getDriveMotor().setInverted(false);
+
+    mSwerveMods[1].getDriveMotor().setInverted(true);
+    mSwerveMods[3].getDriveMotor().setInverted(true);
   }
 
   public Command drive(
@@ -108,7 +134,7 @@ public class Swerve extends SubsystemBase {
               new Translation2d(translationVal, strafeVal)
                   .times(Constants.SwerveConstants.maxSpeed),
               rotationVal * Constants.SwerveConstants.maxAngularVelocity,
-              true,
+              false,
               true);
         })
         .withName("TeleopSwerve");
@@ -244,6 +270,11 @@ public class Swerve extends SubsystemBase {
 
     gyroYaw.set(getYaw().getDegrees());
     field.setRobotPose(getPose());
+
+    SmartDashboard.putNumber("Mod 0", mSwerveMods[0].getPosCanCoder());
+    SmartDashboard.putNumber("Mod 1", mSwerveMods[1].getPosCanCoder());
+    SmartDashboard.putNumber("Mod 2", mSwerveMods[2].getPosCanCoder());
+    SmartDashboard.putNumber("Mod 3", mSwerveMods[3].getPosCanCoder());
   }
 
   @Override

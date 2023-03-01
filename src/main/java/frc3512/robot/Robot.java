@@ -4,12 +4,14 @@
 
 package frc3512.robot;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc3512.lib.logging.SpartanLogManager;
 import frc3512.robot.subsystems.Arm;
+import frc3512.robot.subsystems.ArmExtension;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
 
     m_robot.configureAxisActions();
     m_robot.configureButtonBindings();
+    m_robot.claw.init();
   }
 
   /**
@@ -97,11 +100,15 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    
   }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    Arm.leaderMotor.set(-.05);
+    //ArmExtension.extension.set(.05)
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override

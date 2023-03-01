@@ -2,6 +2,7 @@ package frc3512.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,13 +23,15 @@ public class Robot2023 {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+  private final int armAxis = XboxController.Axis.kRightY.value;
+
   private Arm arm = new Arm();
-  private Claw claw = new Claw();
+  public Claw claw = new Claw();
 
   // Joysticks
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
-  private final CommandXboxController appendage =
+  final static CommandXboxController appendage =
       new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
 
   /** Used for defining button actions. */
@@ -36,6 +39,7 @@ public class Robot2023 {
 
     /* Driver Buttons */
     driver.x().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
+    /* CoDriver Buttons*/
     appendage.b().onTrue(new InstantCommand(() -> claw.toggleClaw()));
   }
 
@@ -43,14 +47,14 @@ public class Robot2023 {
   public void configureAxisActions() {
     m_swerve.setDefaultCommand(
         m_swerve.drive(
-            () -> -driver.getRawAxis(translationAxis),
-            () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis)));
-    arm.setDefaultCommand(arm.move(
-            appendage::getLeftY,
+            () -> -appendage.getRawAxis(translationAxis),
+            () -> -appendage.getRawAxis(strafeAxis),
+            () -> -appendage.getRawAxis(rotationAxis)));
+    /*arm.setDefaultCommand(arm.move(
+            null,
             null,
             null
-    ));
+    ));*/
   }
 
   public Arm getArm() {
@@ -63,6 +67,6 @@ public class Robot2023 {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autos.getSelected();
+    return autos.score2FarZone();
   }
 }
