@@ -108,7 +108,7 @@ public class SwerveModule {
     angleMotor.setInverted(Constants.SwerveConstants.angleInvert);
     angleMotor.setIdleMode(Constants.SwerveConstants.angleNeutralMode);
     integratedAngleEncoder.setPositionConversionFactor(
-        Constants.SwerveConstants.angleConversionFactor);
+        Constants.SwerveConstants.angleConversionFactor); // double check this
     angleController.setP(Constants.SwerveConstants.angleKP);
     angleController.setI(Constants.SwerveConstants.angleKI);
     angleController.setD(Constants.SwerveConstants.angleKD);
@@ -117,6 +117,7 @@ public class SwerveModule {
     angleController.setPositionPIDWrappingMaxInput(180.0);
     angleController.setPositionPIDWrappingEnabled(true);
     angleMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
+    angleMotor.setMotorBrake(false);
     angleMotor.burnFlash();
     integratedAngleEncoder.setPosition(0.0);
   }
@@ -138,13 +139,14 @@ public class SwerveModule {
     driveController.setD(Constants.SwerveConstants.angleKD);
     driveController.setFF(Constants.SwerveConstants.angleKFF);
     driveMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
+    driveMotor.setMotorBrake(true);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
   }
 
   public void resetAbsolute() {
     angleEncoder.configFactoryDefault();
-    double absolutePosition = getPosCanCoder() - angleOffset;
+    double absolutePosition = getAnglePosition() - angleOffset;
     angleEncoder.setPosition(absolutePosition);
   }
 
@@ -186,21 +188,17 @@ public class SwerveModule {
     angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     lastAngle = angle;
 
-    if (RobotBase.isSimulation()) {
-      driveMotorSim.updateSimVelocity(desiredState);
-      angleMotorSim.setCurrentAngle(angle.getDegrees());
-    }
-  }
-
-  public Rotation2d getAnglePosition() {
-    return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+    // if (RobotBase.isSimulation()) {
+    //   driveMotorSim.updateSimVelocity(desiredState);
+    //   angleMotorSim.setCurrentAngle(angle.getDegrees());
+    // }
   }
 
   // public Rotation2d getCanCoder() {
   //   return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
   // }
 
-  public double getPosCanCoder() {
+  public double getAnglePosition() {
     // return angleEncoder.getAbsolutePosition();
 
     // copied from how many layers of copying by Ryan
@@ -265,4 +263,11 @@ public class SwerveModule {
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
   }
+
+  public void synchronizeEncoders() {
+    if (angleEncoder != null) {
+      integratedAngleEncoder.setPosition(getCanCoder() - angleOffset);
+    }
+  }
+
 }

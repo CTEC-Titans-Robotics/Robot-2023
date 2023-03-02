@@ -120,8 +120,8 @@ public final class Constants {
     public static final IdleMode driveNeutralMode = IdleMode.kBrake;
 
     /* Motor Inverts */
-    public static final boolean driveInvert = false;
-    public static final boolean angleInvert = false;
+    public static final boolean driveInvert = true;
+    public static final boolean angleInvert = true;
 
     /* Angle Encoder Invert */
     public static final boolean canCoderInvert = false;
