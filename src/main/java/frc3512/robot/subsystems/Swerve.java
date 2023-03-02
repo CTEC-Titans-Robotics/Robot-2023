@@ -252,17 +252,17 @@ public class Swerve extends SubsystemBase {
 
     moduleAbsolutePositions.set(
         new double[] {
-          mSwerveMods[0].getCanCoder().getDegrees(),
-          mSwerveMods[1].getCanCoder().getDegrees(),
-          mSwerveMods[2].getCanCoder().getDegrees(),
-          mSwerveMods[3].getCanCoder().getDegrees()
+          mSwerveMods[0].getAnglePosition(),
+          mSwerveMods[1].getAnglePosition(),
+          mSwerveMods[2].getAnglePosition(),
+          mSwerveMods[3].getAnglePosition()
         });
     moduleIntegratedPositions.set(
         new double[] {
-          mSwerveMods[0].getAnglePosition().getDegrees(),
-          mSwerveMods[1].getAnglePosition().getDegrees(),
-          mSwerveMods[2].getAnglePosition().getDegrees(),
-          mSwerveMods[3].getAnglePosition().getDegrees()
+          mSwerveMods[0].getAnglePosition(),
+          mSwerveMods[1].getAnglePosition(),
+          mSwerveMods[2].getAnglePosition(),
+          mSwerveMods[3].getAnglePosition()
         });
     moduleDriveVelocities.set(
         new double[] {
@@ -282,10 +282,10 @@ public class Swerve extends SubsystemBase {
     gyroYaw.set(getYaw().getDegrees());
     field.setRobotPose(getPose());
 
-    SmartDashboard.putNumber("Mod 0", mSwerveMods[0].getPosCanCoder());
-    SmartDashboard.putNumber("Mod 1", mSwerveMods[1].getPosCanCoder());
-    SmartDashboard.putNumber("Mod 2", mSwerveMods[2].getPosCanCoder());
-    SmartDashboard.putNumber("Mod 3", mSwerveMods[3].getPosCanCoder());
+    SmartDashboard.putNumber("Mod 0", mSwerveMods[0].getAnglePosition());
+    SmartDashboard.putNumber("Mod 1", mSwerveMods[1].getAnglePosition());
+    SmartDashboard.putNumber("Mod 2", mSwerveMods[2].getAnglePosition());
+    SmartDashboard.putNumber("Mod 3", mSwerveMods[3].getAnglePosition());
   }
 
   @Override

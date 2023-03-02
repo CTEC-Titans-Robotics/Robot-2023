@@ -1,13 +1,16 @@
 package frc3512.robot.subsystems;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.MagnetFieldStrength;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 //import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -15,6 +18,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc3512.lib.sim.MotorSim;
 import frc3512.lib.util.CANCoderUtil;
@@ -58,7 +62,7 @@ public class SwerveModule {
   //Class takes a intetger for use in an array and the modules constants define the can id's of all module devices
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
     this.moduleNumber = moduleNumber;
-    angleOffset = moduleConstants.angleOffset;
+    angleOffset = moduleConstants.angleOffset.getDegrees();
 
     /* Angle Encoder Config */
     angleEncoder = new CANCoder(moduleConstants.cancoderID);
@@ -117,7 +121,7 @@ public class SwerveModule {
     angleController.setPositionPIDWrappingMaxInput(180.0);
     angleController.setPositionPIDWrappingEnabled(true);
     angleMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
-    angleMotor.setMotorBrake(false);
+    angleMotor.setIdleMode(IdleMode.kCoast);
     angleMotor.burnFlash();
     integratedAngleEncoder.setPosition(0.0);
   }
@@ -139,7 +143,7 @@ public class SwerveModule {
     driveController.setD(Constants.SwerveConstants.angleKD);
     driveController.setFF(Constants.SwerveConstants.angleKFF);
     driveMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
-    driveMotor.setMotorBrake(true);
+    driveMotor.setIdleMode(IdleMode.kBrake);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
   }
@@ -202,7 +206,7 @@ public class SwerveModule {
     // return angleEncoder.getAbsolutePosition();
 
     // copied from how many layers of copying by Ryan
-    readingError = false;
+    boolean readingError = false;
     MagnetFieldStrength strength = angleEncoder.getMagnetFieldStrength();
 
     if (strength != MagnetFieldStrength.Good_GreenLED) {
@@ -257,16 +261,16 @@ public class SwerveModule {
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getDriveVelocity(), getAnglePosition());
+    return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAnglePosition()));
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
+    return new SwerveModulePosition(getDrivePosition(), Rotation2d.fromDegrees(getAnglePosition()));
   }
 
   public void synchronizeEncoders() {
     if (angleEncoder != null) {
-      integratedAngleEncoder.setPosition(getCanCoder() - angleOffset);
+      integratedAngleEncoder.setPosition(getAnglePosition() - angleOffset);
     }
   }
 
