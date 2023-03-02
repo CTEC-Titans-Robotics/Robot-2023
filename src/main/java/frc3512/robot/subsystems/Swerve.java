@@ -67,7 +67,7 @@ public class Swerve extends SubsystemBase {
           new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
         };
 
-    Timer.delay(1.0);
+    Timer.delay(2.0);
 
     //New code that moves modules to angle offsets at before periodic
     /*SwerveModuleState SwerveModuleState0 = new SwerveModuleState(0, Constants.SwerveConstants.Mod0.constants.angleOffset);
@@ -85,7 +85,12 @@ public class Swerve extends SubsystemBase {
 
     poseEstimator =
         new SwerveDrivePoseEstimator(
-            Constants.SwerveConstants.swerveKinematics, getYaw(), getPositions(), new Pose2d());
+            Constants.SwerveConstants.swerveKinematics,
+            getYaw(),
+            getPositions(),
+            new Pose2d(new 
+              Translation2d(0, 0),
+              Rotation2d.fromDegrees(0)));
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
@@ -195,7 +200,13 @@ public class Swerve extends SubsystemBase {
   }
 
   public void zeroGyro() {
-    gyro.reset();
+    // if (!RobotBase.isSimulation()) {
+      gyro.setYaw(0);
+    // } else {
+    //   simIMU.setAngle(0);
+    // }
+    // swerveController.lastAngleScalar = 0;
+    resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
   }
 
   public void setYaw(double degrees) {

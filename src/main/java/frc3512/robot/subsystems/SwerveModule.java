@@ -27,7 +27,7 @@ import frc3512.robot.Constants;
 public class SwerveModule {
   public int moduleNumber;
   private Rotation2d lastAngle;
-  private Rotation2d angleOffset;
+  private double angleOffset;
 
   private CANSparkMax angleMotor;
   private CANSparkMax driveMotor;
@@ -108,7 +108,7 @@ public class SwerveModule {
     angleMotor.setInverted(Constants.SwerveConstants.angleInvert);
     angleMotor.setIdleMode(Constants.SwerveConstants.angleNeutralMode);
     integratedAngleEncoder.setPositionConversionFactor(
-        Constants.SwerveConstants.angleConversionFactor);
+        Constants.SwerveConstants.angleConversionFactor); // double check this
     angleController.setP(Constants.SwerveConstants.angleKP);
     angleController.setI(Constants.SwerveConstants.angleKI);
     angleController.setD(Constants.SwerveConstants.angleKD);
@@ -117,6 +117,7 @@ public class SwerveModule {
     angleController.setPositionPIDWrappingMaxInput(180.0);
     angleController.setPositionPIDWrappingEnabled(true);
     angleMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
+    angleMotor.setMotorBrake(false);
     angleMotor.burnFlash();
     integratedAngleEncoder.setPosition(0.0);
   }
@@ -138,12 +139,14 @@ public class SwerveModule {
     driveController.setD(Constants.SwerveConstants.angleKD);
     driveController.setFF(Constants.SwerveConstants.angleKFF);
     driveMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
+    driveMotor.setMotorBrake(true);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
   }
 
   public void resetAbsolute() {
-    double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
+    angleEncoder.configFactoryDefault();
+    double absolutePosition = getAnglePosition() - angleOffset;
     angleEncoder.setPosition(absolutePosition);
   }
 
@@ -185,22 +188,59 @@ public class SwerveModule {
     angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     lastAngle = angle;
 
-    if (RobotBase.isSimulation()) {
-      driveMotorSim.updateSimVelocity(desiredState);
-      angleMotorSim.setCurrentAngle(angle.getDegrees());
+    // if (RobotBase.isSimulation()) {
+    //   driveMotorSim.updateSimVelocity(desiredState);
+    //   angleMotorSim.setCurrentAngle(angle.getDegrees());
+    // }
+  }
+
+  // public Rotation2d getCanCoder() {
+  //   return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+  // }
+
+  public double getAnglePosition() {
+    // return angleEncoder.getAbsolutePosition();
+
+    // copied from how many layers of copying by Ryan
+    readingError = false;
+    MagnetFieldStrength strength = angleEncoder.getMagnetFieldStrength();
+
+    if (strength != MagnetFieldStrength.Good_GreenLED) {
+      DriverStation.reportWarning(
+          "CANCoder " + angleEncoder.getDeviceID() + " magnetic field is less than ideal.\n", false);
     }
-  }
+    if (strength == MagnetFieldStrength.Invalid_Unknown
+        || strength == MagnetFieldStrength.BadRange_RedLED) {
+      readingError = true;
+      DriverStation.reportWarning(
+          "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty.\n", false);
+      return 0;
+    }
+    double angle = angleEncoder.getAbsolutePosition();
 
-  public Rotation2d getAnglePosition() {
-    return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
-  }
+    // Taken from democat's library.
+    // Source:
+    // https://github.com/democat3457/swerve-lib/blob/7c03126b8c22f23a501b2c2742f9d173a5bcbc40/src/main/java/com/swervedrivespecialties/swervelib/ctre/CanCoderFactoryBuilder.java#L51-L74
+    ErrorCode code = angleEncoder.getLastError();
+    int ATTEMPTS = 3;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      if (code == ErrorCode.OK) {
+        break;
+      }
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+      }
+      angle = angleEncoder.getAbsolutePosition();
+      code = angleEncoder.getLastError();
+    }
+    if (code != ErrorCode.OK) {
+      readingError = true;
+      DriverStation.reportWarning(
+          "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty, ignoring.\n", false);
+    }
 
-  public Rotation2d getCanCoder() {
-    return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
-  }
-
-  public double getPosCanCoder() {
-    return angleEncoder.getAbsolutePosition();
+    return angle;
   }
 
   public double getDriveVelocity() {
@@ -223,4 +263,11 @@ public class SwerveModule {
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getDrivePosition(), getAnglePosition());
   }
+
+  public void synchronizeEncoders() {
+    if (angleEncoder != null) {
+      integratedAngleEncoder.setPosition(getCanCoder() - angleOffset);
+    }
+  }
+
 }
