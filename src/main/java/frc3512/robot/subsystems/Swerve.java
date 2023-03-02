@@ -57,7 +57,6 @@ public class Swerve extends SubsystemBase {
     gyro = new WPI_Pigeon2(Constants.SwerveConstants.pigeonID);
     gyroSim = new GyroSim(gyro);
     gyro.configFactoryDefault();
-    zeroGyro();
 
     mSwerveMods =
         new SwerveModule[] {
@@ -92,6 +91,7 @@ public class Swerve extends SubsystemBase {
               Translation2d(0, 0),
               Rotation2d.fromDegrees(0)));
 
+    zeroGyro();
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
