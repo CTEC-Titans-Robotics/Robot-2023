@@ -10,11 +10,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -50,9 +54,11 @@ public class Arm extends SubsystemBase {
     private static double minVel = -0.1;
     private static double maxVel = 0.1;
     private static double maxAccel = 0;
-    private static double minPos = -180;
+    private static double minPos = -72;
     private static double maxPos = 10;
     private static double angleCANOffset = 27.58;
+
+    private static SparkMaxLimitSwitch limitSwitch = followerMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
     public static double armAngle;
     public boolean reachedMax;
@@ -110,6 +116,8 @@ private void configAngleEncoder() {
     CANCoderUtil.setCANCoderBusUsage(rotationEncoder, CANCoderUsage.kMinimal);
 
     rotationEncoder.setPositionToAbsolute();
+    followerMotor.setIdleMode(IdleMode.kBrake);
+    leaderMotor.setIdleMode(IdleMode.kBrake);
   }
 
     public static void initDashboard() {
@@ -152,7 +160,7 @@ private void configAngleEncoder() {
             reachedMax = false;
         }
 
-        if (armAngle < minPos) {
+        if (armAngle < minPos || limitSwitch.isPressed()) {
             reachedMin = true;
         } else {
             reachedMin = false;
@@ -210,7 +218,7 @@ private void configAngleEncoder() {
     public Command simpleArmPositiveMovement(BooleanSupplier max){
         return run(() -> {
             if(!max.getAsBoolean()) {
-                leaderMotor.set(0.05);
+                leaderMotor.set(0.15);
             } else {
                 stopMovement();
             }
@@ -219,7 +227,7 @@ private void configAngleEncoder() {
     public Command simpleArmNegativeMovement(BooleanSupplier min){
         return run(() -> {
             if(!min.getAsBoolean()) {
-                leaderMotor.set(-0.05);
+                leaderMotor.set(-0.15);
             } else {
                 stopMovement();
             }

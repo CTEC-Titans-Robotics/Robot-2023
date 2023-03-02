@@ -48,8 +48,8 @@ public class Robot2023 {
     appendage.leftBumper().onFalse(arm.stopMovementCommand());
     appendage.rightBumper().onFalse(arm.stopMovementCommand());
 
-    appendage.rightTrigger().onTrue(extension.positiveMovement(extension.reachedMaxSup));
-    appendage.leftTrigger().onTrue(extension.negativeMovement(extension.reachedMinSup));
+    appendage.rightTrigger().whileTrue(extension.positiveMovement(extension.reachedMaxSup));
+    appendage.leftTrigger().whileTrue(extension.negativeMovement(extension.reachedMinSup));
     appendage.rightTrigger().onFalse(extension.stopMovementCommand());
     appendage.leftTrigger().onFalse(extension.stopMovementCommand());
   }
@@ -58,9 +58,9 @@ public class Robot2023 {
   public void configureAxisActions() {
     m_swerve.setDefaultCommand(
         m_swerve.drive(
-            () -> -appendage.getRawAxis(translationAxis),
-            () -> -appendage.getRawAxis(strafeAxis),
-            () -> -appendage.getRawAxis(rotationAxis)));
+            () -> -driver.getRawAxis(translationAxis),
+            () -> -driver.getRawAxis(strafeAxis),
+            () -> -driver.getRawAxis(rotationAxis)));
     /*arm.setDefaultCommand(arm.move(
             null,
             null,

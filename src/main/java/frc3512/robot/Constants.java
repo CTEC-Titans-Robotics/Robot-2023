@@ -29,10 +29,10 @@ public final class Constants {
   /** Constants revolving around joysticks */
   public static class OperatorConstants {
     // Driver controller port
-    public static final int driverControllerPort = 1;
+    public static final int driverControllerPort = 0;
 
     // Appendage controller port
-    public static final int appendageControllerPort = 0;
+    public static final int appendageControllerPort = 1;
   }
 
   /** Constants revolving around the vision subsystem. */

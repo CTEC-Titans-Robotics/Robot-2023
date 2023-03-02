@@ -6,6 +6,7 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -28,8 +29,8 @@ public class ArmExtension extends SubsystemBase {
     public static boolean isZeroed;
     public static double rotationCounter;
     public double extDistance;
-    public double maxPos = 4.7;
-    public double minPos = 0.1; 
+    public double maxPos = 4.8;
+    public double minPos = 0.3; 
     public boolean reachedMax;
     public boolean reachedMin;
     public BooleanSupplier reachedMaxSup = () -> reachedMax;
@@ -40,11 +41,16 @@ public class ArmExtension extends SubsystemBase {
     public ArmExtension() {
         isZeroed = false; 
         relavitveEncoder.reset();
+
+        extension.setIdleMode(IdleMode.kBrake);
     }
     public void periodic(){
         SmartDashboard.putNumber("relativeEncoder", relavitveEncoder.get());
         SmartDashboard.putNumber("Output in Amps", extension.getOutputCurrent());
         SmartDashboard.putBoolean("Zeroed", isZeroed);
+        SmartDashboard.putNumber("minPosExt", extDistance);
+        extDistance = relavitveEncoder.get();
+        
         if (extDistance > maxPos) {
             reachedMax = true;
         } else {
@@ -56,6 +62,9 @@ public class ArmExtension extends SubsystemBase {
         } else {
             reachedMin = false;
         }
+
+        SmartDashboard.putBoolean("reachedMinExt", reachedMin);
+        SmartDashboard.putBoolean("reachedMaxExt", reachedMax);
     }
 
     public void zeroingProtocall() {
@@ -73,7 +82,7 @@ public class ArmExtension extends SubsystemBase {
     public Command positiveMovement(BooleanSupplier max){
         return run(() -> {
             if(!max.getAsBoolean()) {
-                extension.set(0.05);
+                extension.set(0.15);
             } else {
                 stopMovement();
             }
@@ -82,7 +91,7 @@ public class ArmExtension extends SubsystemBase {
     public Command negativeMovement(BooleanSupplier min){
         return run(() -> {
             if(!min.getAsBoolean()) {
-                extension.set(-0.05);
+                extension.set(-0.15);
             } else {
                 stopMovement();
             }
