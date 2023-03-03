@@ -72,7 +72,7 @@ public class Arm extends SubsystemBase {
         
         initDashboard();
         followerMotor.follow(leaderMotor);
-        configAngleEncoder();
+        armConfigAngleEncoder();
         /*
     
         mainPIDMotor.setP(kP);
@@ -103,16 +103,16 @@ public class Arm extends SubsystemBase {
         return run(() -> moveToPos(position, vel, accel));
     }
 */
-private void configAngleEncoder() {
-    CANCoderConfiguration config = new CANCoderConfiguration();
-    config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-    config.sensorDirection = Constants.SwerveConstants.canCoderInvert;
-    config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-    config.sensorTimeBase = SensorTimeBase.PerSecond;
-    config.sensorCoefficient = 0.087890625;
+private void armConfigAngleEncoder() {
+    CANCoderConfiguration armconfig = new CANCoderConfiguration();
+    armconfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+    armconfig.sensorDirection = Constants.SwerveConstants.canCoderInvert;
+    armconfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+    armconfig.sensorTimeBase = SensorTimeBase.PerSecond;
+    armconfig.sensorCoefficient = 0.087890625;
 
     rotationEncoder.configFactoryDefault();
-    rotationEncoder.configAllSettings(config);
+    rotationEncoder.configAllSettings(armconfig);
     CANCoderUtil.setCANCoderBusUsage(rotationEncoder, CANCoderUsage.kMinimal);
 
     rotationEncoder.setPositionToAbsolute();

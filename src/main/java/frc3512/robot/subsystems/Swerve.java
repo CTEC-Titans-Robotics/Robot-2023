@@ -51,6 +51,7 @@ public class Swerve extends SubsystemBase {
   private final SpartanDoubleArrayEntry moduleDriveVelocities;
   private final SpartanDoubleArrayEntry moduleDrivePositions;
 
+
   /** Subsystem class for the swerve drive. */
   public Swerve() {
     camera = new PhotonCameraWrapper();
@@ -81,15 +82,14 @@ public class Swerve extends SubsystemBase {
     //end of new code
 
     resetModuleZeros();
+    syncModuleEncoders();
 
     poseEstimator =
         new SwerveDrivePoseEstimator(
             Constants.SwerveConstants.swerveKinematics,
             getYaw(),
             getPositions(),
-            new Pose2d(new 
-              Translation2d(0, 0),
-              Rotation2d.fromDegrees(0)));
+            new Pose2d());
 
     zeroGyro();
     field = new Field2d();
@@ -191,8 +191,15 @@ public class Swerve extends SubsystemBase {
 
   public void resetModuleZeros() {
     for (SwerveModule mod : mSwerveMods) {
-      mod.resetAbsolute();
-    }
+      mod.resetAbsolute(); 
+      //Timer.delay(5);
+   }
+  }
+  public void syncModuleEncoders() {
+      for (SwerveModule mod : mSwerveMods) {
+        mod.synchronizeEncoders();
+        //Timer.delay(5);
+      }
   }
 
   public void resetOdometry(Pose2d pose) {
@@ -286,6 +293,11 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("Mod 1", mSwerveMods[1].getAnglePosition());
     SmartDashboard.putNumber("Mod 2", mSwerveMods[2].getAnglePosition());
     SmartDashboard.putNumber("Mod 3", mSwerveMods[3].getAnglePosition());
+
+    SmartDashboard.putBoolean("Mod 0 resetAbsolute", mSwerveMods[0].reseted);
+    SmartDashboard.putBoolean("Mod 1 resetAbsolute", mSwerveMods[1].reseted);
+    SmartDashboard.putBoolean("Mod 2 resetAbsolute", mSwerveMods[2].reseted);
+    SmartDashboard.putBoolean("Mod 3 resetAbsolute", mSwerveMods[3].reseted);
   }
 
   @Override

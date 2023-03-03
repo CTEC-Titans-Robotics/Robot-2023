@@ -52,6 +52,7 @@ public class SwerveModule {
   private final MotorSim driveMotorSim = new MotorSim();
   private final MotorSim angleMotorSim = new MotorSim();
 
+  public boolean reseted = false;
   /**
    * Creates a new swerve module with NEO motors and a CTRE CANCoder.
    *
@@ -149,9 +150,19 @@ public class SwerveModule {
   }
 
   public void resetAbsolute() {
-    angleEncoder.configFactoryDefault();
+    //angleEncoder.configFactoryDefault();
     double absolutePosition = getAnglePosition() - angleOffset;
-    angleEncoder.setPosition(absolutePosition);
+
+//checks if the current position is within a tollerance of the angle offset  
+    /*double tollerance = 2;
+     if ((angleOffset - tollerance) < absolutePosition && absolutePosition < (angleOffset + 0.5)){
+      angleEncoder.setPosition(absolutePosition);
+      reseted = true;
+    } else {
+      angleEncoder.setPosition(angleOffset);
+    }  */
+   angleEncoder.setPosition(absolutePosition);
+   reseted = true;
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {

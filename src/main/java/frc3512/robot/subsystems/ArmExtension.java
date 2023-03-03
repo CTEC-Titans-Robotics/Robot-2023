@@ -30,7 +30,7 @@ public class ArmExtension extends SubsystemBase {
     public static double rotationCounter;
     public double extDistance;
     public double maxPos = 4.8;
-    public double minPos = 0.3; 
+    public double minPos = 0.15; 
     public boolean reachedMax;
     public boolean reachedMin;
     public BooleanSupplier reachedMaxSup = () -> reachedMax;

@@ -96,7 +96,7 @@ public final class Constants {
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values */
-    public static final double driveKP = 0.0;
+    public static final double driveKP = 0.01;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double driveKFF = 0.0;
@@ -113,7 +113,7 @@ public final class Constants {
 
     /* Swerve Profiling Values */
     public static final double maxSpeed = 0.5; // meters per second
-    public static final double maxAngularVelocity = 11.5;
+    public static final double maxAngularVelocity = 0.25;
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kCoast;
@@ -132,7 +132,8 @@ public final class Constants {
       public static final int driveMotorID = 16;
       public static final int angleMotorID = 18;
       public static final int canCoderID = 5;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(87.71484375); // Proto: -112.5
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(87.71484375); 
+      // Proto: -112.5 | bevel gears in 87.71484375 | bevel gears to the right 87.71484375
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -142,7 +143,8 @@ public final class Constants {
       public static final int driveMotorID = 1; // Proto: 2
       public static final int angleMotorID = 3; // Proto: 1
       public static final int canCoderID = 9; // Proto: 3
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(1.845703125); // Proto: -125.59569549560548
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(1.845703125); 
+      // Proto: -125.59569549560548 | bevel gears in 1.845703125 | bevel gears to the right -177.5390625
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -152,7 +154,8 @@ public final class Constants {
       public static final int driveMotorID = 17; // Proto: 14
       public static final int angleMotorID = 19; // Proto: 13
       public static final int canCoderID = 6; // Proto : 2
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(60.29296875); // Proto: 106.96289825439453
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(61.435546875); 
+      // Proto: 106.96289825439453 |  bevel gears in 60.29296875 | bevel gears to the right 61.435546875
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -162,7 +165,8 @@ public final class Constants {
       public static final int driveMotorID = 10; // Proto: 4
       public static final int angleMotorID = 2; // Proto: 3
       public static final int canCoderID = 8; // Proto: 1
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(45.087890625); // Proto: 149.677734375
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(45.087890625); 
+      // Proto: 149.677734375 | bevel gears in 45.087890625 | bevel gears to the right -135.439453125
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
