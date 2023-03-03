@@ -112,7 +112,7 @@ public class Swerve extends SubsystemBase {
     mSwerveMods[1].getTurnMotor().setInverted(true);
     mSwerveMods[3].getTurnMotor().setInverted(true);
 
-    mSwerveMods[0].getDriveMotor().setInverted(false);
+    mSwerveMods[0].getDriveMotor().setInverted(false); 
     mSwerveMods[2].getDriveMotor().setInverted(false);
 
     mSwerveMods[1].getDriveMotor().setInverted(true);
@@ -179,6 +179,9 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
+    if((translation.getY() == 0) && translation.getX() == 0 && rotation == 0) {
+      syncModuleEncoders();
+    }
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -195,11 +198,19 @@ public class Swerve extends SubsystemBase {
       //Timer.delay(5);
    }
   }
+  
   public void syncModuleEncoders() {
+    for (SwerveModule mod : mSwerveMods) {
+      mod.synchronizeEncoders();
+      //Timer.delay(5);
+    }
+  }
+
+  public void syncModuleEncoders0() {
       for (SwerveModule mod : mSwerveMods) {
-        mod.synchronizeEncoders();
+        mod.synchronizeEncoders1();
         //Timer.delay(5);
-      }
+    }
   }
 
   public void resetOdometry(Pose2d pose) {
@@ -289,10 +300,16 @@ public class Swerve extends SubsystemBase {
     gyroYaw.set(getYaw().getDegrees());
     field.setRobotPose(getPose());
 
-    SmartDashboard.putNumber("Mod 0", mSwerveMods[0].getAnglePosition());
-    SmartDashboard.putNumber("Mod 1", mSwerveMods[1].getAnglePosition());
-    SmartDashboard.putNumber("Mod 2", mSwerveMods[2].getAnglePosition());
-    SmartDashboard.putNumber("Mod 3", mSwerveMods[3].getAnglePosition());
+    SmartDashboard.putNumber("Mod 0 CAN Coder", mSwerveMods[0].getAnglePosition());
+    SmartDashboard.putNumber("Mod 1 CAN Coder", mSwerveMods[1].getAnglePosition());
+    SmartDashboard.putNumber("Mod 2 CAN Coder", mSwerveMods[2].getAnglePosition());
+    SmartDashboard.putNumber("Mod 3 CAN Coder", mSwerveMods[3].getAnglePosition());
+
+    SmartDashboard.putNumber("Mod 0 Integrated Encoder", mSwerveMods[0].integratedAngleEncoder.getPosition());
+    SmartDashboard.putNumber("Mod 1 Integrated Encoder", mSwerveMods[1].integratedAngleEncoder.getPosition());
+    SmartDashboard.putNumber("Mod 2 Integrated Encoder", mSwerveMods[2].integratedAngleEncoder.getPosition());
+    SmartDashboard.putNumber("Mod 3 Integrated Encoder", mSwerveMods[3].integratedAngleEncoder.getPosition());
+
 
     SmartDashboard.putBoolean("Mod 0 resetAbsolute", mSwerveMods[0].reseted);
     SmartDashboard.putBoolean("Mod 1 resetAbsolute", mSwerveMods[1].reseted);

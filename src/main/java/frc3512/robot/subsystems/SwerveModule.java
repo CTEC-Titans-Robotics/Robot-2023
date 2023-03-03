@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 //import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc3512.lib.sim.MotorSim;
 import frc3512.lib.util.CANCoderUtil;
 import frc3512.lib.util.CANCoderUtil.CANCoderUsage;
@@ -37,7 +39,7 @@ public class SwerveModule {
   private CANSparkMax driveMotor;
 
   private RelativeEncoder driveEncoder;
-  private RelativeEncoder integratedAngleEncoder;
+  public RelativeEncoder integratedAngleEncoder;
   private CANCoder angleEncoder;
 
   private final SparkMaxPIDController driveController;
@@ -114,6 +116,7 @@ public class SwerveModule {
     angleMotor.setIdleMode(Constants.SwerveConstants.angleNeutralMode);
     integratedAngleEncoder.setPositionConversionFactor(
         Constants.SwerveConstants.angleConversionFactor); // double check this
+
     angleController.setP(Constants.SwerveConstants.angleKP);
     angleController.setI(Constants.SwerveConstants.angleKI);
     angleController.setD(Constants.SwerveConstants.angleKD);
@@ -124,7 +127,7 @@ public class SwerveModule {
     angleMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
     angleMotor.setIdleMode(IdleMode.kCoast);
     angleMotor.burnFlash();
-    integratedAngleEncoder.setPosition(0.0);
+    // integratedAngleEncoder.setPosition(0.0);
   }
 
   public void configDriveMotor() {
@@ -217,43 +220,43 @@ public class SwerveModule {
     // return angleEncoder.getAbsolutePosition();
 
     // copied from how many layers of copying by Ryan
-    boolean readingError = false;
-    MagnetFieldStrength strength = angleEncoder.getMagnetFieldStrength();
+    // boolean readingError = false;
+    // MagnetFieldStrength strength = angleEncoder.getMagnetFieldStrength();
 
-    if (strength != MagnetFieldStrength.Good_GreenLED) {
-      DriverStation.reportWarning(
-          "CANCoder " + angleEncoder.getDeviceID() + " magnetic field is less than ideal.\n", false);
-    }
-    if (strength == MagnetFieldStrength.Invalid_Unknown
-        || strength == MagnetFieldStrength.BadRange_RedLED) {
-      readingError = true;
-      DriverStation.reportWarning(
-          "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty.\n", false);
-      return 0;
-    }
+    // if (strength != MagnetFieldStrength.Good_GreenLED) {
+    //   DriverStation.reportWarning(
+    //       "CANCoder " + angleEncoder.getDeviceID() + " magnetic field is less than ideal.\n", false);
+    // }
+    // if (strength == MagnetFieldStrength.Invalid_Unknown
+    //     || strength == MagnetFieldStrength.BadRange_RedLED) {
+    //   readingError = true;
+    //   DriverStation.reportWarning(
+    //       "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty.\n", false);
+    //   return 0;
+    // }
     double angle = angleEncoder.getAbsolutePosition();
 
     // Taken from democat's library.
     // Source:
     // https://github.com/democat3457/swerve-lib/blob/7c03126b8c22f23a501b2c2742f9d173a5bcbc40/src/main/java/com/swervedrivespecialties/swervelib/ctre/CanCoderFactoryBuilder.java#L51-L74
-    ErrorCode code = angleEncoder.getLastError();
-    int ATTEMPTS = 3;
-    for (int i = 0; i < ATTEMPTS; i++) {
-      if (code == ErrorCode.OK) {
-        break;
-      }
-      try {
-        Thread.sleep(10);
-      } catch (InterruptedException e) {
-      }
-      angle = angleEncoder.getAbsolutePosition();
-      code = angleEncoder.getLastError();
-    }
-    if (code != ErrorCode.OK) {
-      readingError = true;
-      DriverStation.reportWarning(
-          "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty, ignoring.\n", false);
-    }
+    // ErrorCode code = angleEncoder.getLastError();
+    // int ATTEMPTS = 3;
+    // for (int i = 0; i < ATTEMPTS; i++) {
+    //   if (code == ErrorCode.OK) {
+    //     break;
+    //   }
+    //   try {
+    //     Thread.sleep(10);
+    //   } catch (InterruptedException e) {
+    //   }
+    //   angle = angleEncoder.getAbsolutePosition();
+    //   code = angleEncoder.getLastError();
+    // }
+    // if (code != ErrorCode.OK) {
+    //   readingError = true;
+    //   DriverStation.reportWarning(
+    //       "CANCoder " + angleEncoder.getDeviceID() + " reading was faulty, ignoring.\n", false);
+    // }
 
     return angle;
   }
@@ -280,9 +283,14 @@ public class SwerveModule {
   }
 
   public void synchronizeEncoders() {
-    if (angleEncoder != null) {
+    if (integratedAngleEncoder != null && angleEncoder != null) {
       integratedAngleEncoder.setPosition(getAnglePosition() - angleOffset);
     }
   }
-
+  public void synchronizeEncoders1(){
+    if (integratedAngleEncoder != null && angleEncoder != null) {
+      integratedAngleEncoder.setPosition(getAnglePosition());
+    }
+  }
+  
 }
