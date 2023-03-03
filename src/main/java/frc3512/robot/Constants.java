@@ -86,8 +86,9 @@ public final class Constants {
             new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
     /* Swerve Current Limiting */
-    public static final int angleContinuousCurrentLimit = 25;
-    public static final int driveContinuousCurrentLimit = 35;
+    // test values 
+    public static final int angleContinuousCurrentLimit = 30;
+    public static final int driveContinuousCurrentLimit = 40;
 
     /* Angle Motor PID Values */
     public static final double angleKP = 0.01;
@@ -96,7 +97,7 @@ public final class Constants {
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values */
-    public static final double driveKP = 0.01;
+    public static final double driveKP = 0.0020645;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double driveKFF = 0.0;

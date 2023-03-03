@@ -282,7 +282,7 @@ public class SwerveModule {
   public void synchronizeEncoders() {
     if (angleEncoder != null) {
       // integratedAngleEncoder.setPosition(getAnglePosition() - angleOffset);
-      integratedAngleEncoder.setPosition(getAnglePosition();
+      integratedAngleEncoder.setPosition(getAnglePosition());
     }
   }
 
