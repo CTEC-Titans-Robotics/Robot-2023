@@ -124,7 +124,7 @@ public class SwerveModule {
     angleMotor.enableVoltageCompensation(Constants.GeneralConstants.voltageComp);
     angleMotor.setIdleMode(IdleMode.kCoast);
     angleMotor.burnFlash();
-    integratedAngleEncoder.setPosition(0.0);
+    // integratedAngleEncoder.setPosition(0.0);
   }
 
   public void configDriveMotor() {
@@ -281,7 +281,8 @@ public class SwerveModule {
 
   public void synchronizeEncoders() {
     if (angleEncoder != null) {
-      integratedAngleEncoder.setPosition(getAnglePosition() - angleOffset);
+      // integratedAngleEncoder.setPosition(getAnglePosition() - angleOffset);
+      integratedAngleEncoder.setPosition(getAnglePosition();
     }
   }
 
