@@ -43,15 +43,15 @@ public class Robot2023 {
     driver.x().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
     /* CoDriver Buttons*/
     appendage.b().onTrue(new InstantCommand(() -> claw.toggleClaw()));
-    appendage.leftBumper().whileTrue(arm.simpleArmNegativeMovement(arm.reachedMinSup));
-    appendage.rightBumper().whileTrue(arm.simpleArmPositiveMovement(arm.reachedMaxSup));
-    appendage.leftBumper().onFalse(arm.stopMovementCommand());
+    appendage.rightBumper().whileTrue(arm.simpleArmNegativeMovement(arm.reachedMinSup));
+    appendage.rightTrigger().whileTrue(arm.simpleArmPositiveMovement(arm.reachedMaxSup));
     appendage.rightBumper().onFalse(arm.stopMovementCommand());
+    appendage.rightTrigger().onFalse(arm.stopMovementCommand());
 
-    appendage.rightTrigger().whileTrue(extension.positiveMovement(extension.reachedMaxSup));
-    appendage.leftTrigger().whileTrue(extension.negativeMovement(extension.reachedMinSup));
-    appendage.rightTrigger().onFalse(extension.stopMovementCommand());
+    appendage.leftTrigger().whileTrue(extension.positiveMovement(extension.reachedMaxSup));
+    appendage.leftBumper().whileTrue(extension.negativeMovement(extension.reachedMinSup));
     appendage.leftTrigger().onFalse(extension.stopMovementCommand());
+    appendage.leftBumper().onFalse(extension.stopMovementCommand());
   }
 
   /** Used for joystick/xbox axis actions. */

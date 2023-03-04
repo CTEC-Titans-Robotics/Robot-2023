@@ -90,7 +90,7 @@ public final class Constants {
     public static final int driveContinuousCurrentLimit = 35;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.01;
+    public static final double angleKP = 0.002;
     public static final double angleKI = 0.0;
     public static final double angleKD = 0.0;
     public static final double angleKFF = 0.0;

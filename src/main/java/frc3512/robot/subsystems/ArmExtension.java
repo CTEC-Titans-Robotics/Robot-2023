@@ -82,7 +82,7 @@ public class ArmExtension extends SubsystemBase {
     public Command positiveMovement(BooleanSupplier max){
         return run(() -> {
             if(!max.getAsBoolean()) {
-                extension.set(0.15);
+                extension.set(0.25);
             } else {
                 stopMovement();
             }
@@ -91,7 +91,7 @@ public class ArmExtension extends SubsystemBase {
     public Command negativeMovement(BooleanSupplier min){
         return run(() -> {
             if(!min.getAsBoolean()) {
-                extension.set(-0.15);
+                extension.set(-0.25);
             } else {
                 stopMovement();
             }

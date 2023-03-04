@@ -50,6 +50,7 @@ public class Swerve extends SubsystemBase {
   private final SpartanDoubleArrayEntry moduleAbsolutePositions;
   private final SpartanDoubleArrayEntry moduleDriveVelocities;
   private final SpartanDoubleArrayEntry moduleDrivePositions;
+  private int counter = 0;
 
 
   /** Subsystem class for the swerve drive. */
@@ -139,7 +140,7 @@ public class Swerve extends SubsystemBase {
               new Translation2d(translationVal, strafeVal)
                   .times(Constants.SwerveConstants.maxSpeed),
               rotationVal * Constants.SwerveConstants.maxAngularVelocity,
-              false,
+              true,
               true);
         })
         .withName("TeleopSwerve");
@@ -179,8 +180,8 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
-    if((translation.getY() == 0) && translation.getX() == 0 && rotation == 0) {
-      syncModuleEncoders();
+    if((translation.getY() <= 0.05 && translation.getX() <= 0.05 && rotation <= 0.05) && (translation.getY() >= -0.05 && translation.getX() >= -0.05 && rotation >= -0.05)) {
+      syncModuleEncoders0();
     }
   }
 

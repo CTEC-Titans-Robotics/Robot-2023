@@ -16,6 +16,6 @@ public class Claw extends SubsystemBase {
     }
 
     public void init() {
-        compressor.enableAnalog(60, 80);
+        compressor.enableAnalog(80, 100);
     }
 }
