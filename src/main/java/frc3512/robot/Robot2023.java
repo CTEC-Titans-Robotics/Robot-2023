@@ -7,20 +7,17 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.subsystems.Arm;
-import frc3512.robot.subsystems.Elevator;
-import frc3512.robot.subsystems.Intake;
-import frc3512.robot.subsystems.Superstructure;
+import frc3512.robot.subsystems.ArmExtension;
+import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
-import frc3512.robot.subsystems.Vision;
 
 public class Robot2023 {
   // Robot subsystems
-  private Vision vision = new Vision();
-  private Swerve swerve = new Swerve(vision);
-  private Elevator elevator = new Elevator();
+  private Swerve swerve = new Swerve();
+
   private Arm arm = new Arm();
-  private Intake intake = new Intake();
-  private Superstructure superstructure = new Superstructure(swerve, elevator, arm, intake);
+  public Claw claw = new Claw();
+  public ArmExtension extension = new ArmExtension();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -30,8 +27,8 @@ public class Robot2023 {
   // Joysticks
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
-  private final CommandJoystick appendage =
-      new CommandJoystick(Constants.OperatorConstants.appendageControllerPort);
+  private final CommandXboxController appendage =
+      new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
 
   public void setMotorBrake(boolean brake) {
     swerve.setMotorBrake(brake);
@@ -39,26 +36,39 @@ public class Robot2023 {
 
   /** Used for defining button actions. */
   public void configureButtonBindings() {
-
     driver.x().onTrue(new InstantCommand(() -> swerve.zeroGyro()));
+    driver.leftTrigger().whileTrue(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 1));
+    driver.leftTrigger().whileFalse(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 14.5));
 
-    appendage.button(1).whileTrue(intake.stopIntake());
-    appendage.button(5).whileTrue(intake.intakeGamePiece());
-    appendage.button(6).whileTrue(intake.outtakeGamePiece());
+    appendage.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
+    appendage.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
+  }
+
+  public void periodic() {
+    if(appendage.getRightY() > 0.05) {
+      extension.negativeMovement(extension.reachedMinSup);
+    } else if(appendage.getRightY() < -0.05) {
+      extension.positiveMovement(extension.reachedMaxSup);
+    } else {
+      extension.stopMovement();
+    }
+
+    if(appendage.getLeftY() > 0.05) {
+      arm.simpleArmNegativeMovement(arm.reachedMinSup);
+    } else if(appendage.getLeftY() < -0.05) {
+      arm.simpleArmPositiveMovement(arm.reachedMaxSup);
+    } else {
+      arm.stopMovement();
+    }
   }
 
   /** Used for joystick/xbox axis actions. */
   public void configureAxisActions() {
     swerve.setDefaultCommand(
         swerve.drive(
-            () -> -driver.getRawAxis(translationAxis),
-            () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis)));
-
-    elevator.setDefaultCommand(
-        elevator.moveElevator(() -> MathUtil.applyDeadband(appendage.getRawAxis(1), 0.01)));
-
-    arm.setDefaultCommand(arm.runArm(() -> appendage.getHID().getPOV()));
+            () -> driver.getRawAxis(translationAxis),
+            () -> driver.getRawAxis(strafeAxis),
+            () -> driver.getRawAxis(rotationAxis)));
   }
 
   /**
@@ -66,7 +76,4 @@ public class Robot2023 {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return superstructure.getAuton();
-  }
 }

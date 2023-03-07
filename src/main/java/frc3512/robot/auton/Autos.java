@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc3512.robot.Constants;
-import frc3512.robot.subsystems.Arm;
-import frc3512.robot.subsystems.Elevator;
-import frc3512.robot.subsystems.Intake;
 import frc3512.robot.subsystems.Swerve;
 import java.util.HashMap;
 
@@ -18,21 +15,14 @@ import java.util.HashMap;
 public final class Autos {
 
   private final Swerve swerve;
-  private final Elevator elevator;
-  private final Intake intake;
-  private final Arm arm;
   private final SendableChooser<Command> autonChooser;
   private final HashMap<String, Command> eventMap;
   private final SwerveAutoBuilder autonBuilder;
 
-  public Autos(Swerve swerve, Elevator elevator, Intake intake, Arm arm) {
+  public Autos(Swerve swerve) {
     this.swerve = swerve;
-    this.elevator = elevator;
-    this.intake = intake;
-    this.arm = arm;
 
     eventMap = new HashMap<>();
-    setMarkers();
 
     autonBuilder =
         new SwerveAutoBuilder(
@@ -54,14 +44,6 @@ public final class Autos {
     autonChooser.addOption("Score 3 Far Zone", score3FarZone());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);
-  }
-
-  private void setMarkers() {
-    eventMap.put("Intake Stop", intake.stopIntake());
-    eventMap.put("Intake Intake Cube", intake.intakeGamePiece());
-    eventMap.put("Intake Outtake Cube", intake.outtakeGamePiece());
-    eventMap.put("Intake Intake Cone", intake.outtakeGamePiece());
-    eventMap.put("Intake Outtake Cone", intake.intakeGamePiece());
   }
 
   public Command getSelected() {

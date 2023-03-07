@@ -18,18 +18,14 @@ import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 
 public class Swerve extends SubsystemBase {
-
-  private final Vision vision;
-  private final SwerveDrive swerve;
+  public final SwerveDrive swerve;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
 
   /** Subsystem class for the swerve drive. */
-  public Swerve(Vision vision) {
-    this.vision = vision;
-
+  public Swerve() {
     try {
       swerve =
           new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve")).createSwerveDrive();
@@ -96,15 +92,5 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     swerve.updateOdometry();
-
-    if (RobotBase.isReal()) {
-      Optional<EstimatedRobotPose> result = vision.getEstimatedGlobalPose(getPose());
-
-      if (result.isPresent()) {
-        EstimatedRobotPose camPose = result.get();
-        swerve.addVisionMeasurement(
-            camPose.estimatedPose.toPose2d(), camPose.timestampSeconds, true);
-      }
-    }
   }
 }

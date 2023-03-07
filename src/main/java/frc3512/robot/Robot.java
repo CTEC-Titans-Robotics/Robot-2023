@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
 
     m_robot.configureButtonBindings();
     m_robot.configureAxisActions();
+    m_robot.claw.init();
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot
     // stop
@@ -94,13 +95,13 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_robot.setMotorBrake(true);
-    m_autonomousCommand = m_robot.getAutonomousCommand();
+    //m_robot.setMotorBrake(true);
+    //m_autonomousCommand = m_robot.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    //// schedule the autonomous command (example)
+    //if (m_autonomousCommand != null) {
+    //  m_autonomousCommand.schedule();
+    //}
   }
 
   /** This function is called periodically during autonomous. */
@@ -121,7 +122,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robot.periodic();
+  }
 
   @Override
   public void testInit() {
