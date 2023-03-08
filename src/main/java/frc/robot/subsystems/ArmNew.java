@@ -22,7 +22,7 @@ public class ArmNew extends ProfiledPIDSubsystem {
     public static final CANSparkMax m_followerController = new CANSparkMax(Constants.IDs.kArmFollowerCANID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private static SparkMaxLimitSwitch m_limitSwitch =
       m_mainController.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-    public static final CANCoder m_rotationEncoder = new CANCoder(7);
+    public static final CANCoder m_rotationEncoder = new CANCoder(Constants.IDs.kArmCancoderCANID);
     private ProfiledPIDController m_pidController;
     // need to do sysid profiling
     private final ArmFeedforward m_feedforward =

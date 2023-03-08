@@ -141,8 +141,8 @@ public final class Constants {
     public static final int PDH_CAN_ID = 42;
 
     // arm
-    public static final int kArmMainCANID = 15;
-    public static final int kArmFollowerCANID = 14;
+    public static final int kArmMainCANID = 14;
+    public static final int kArmFollowerCANID = 15;
     public static final int kArmCancoderCANID = 7;
 
   }
