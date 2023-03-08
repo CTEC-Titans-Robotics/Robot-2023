@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.ArmNew;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Swerve;
@@ -16,7 +17,7 @@ public class Robot2023 {
 
   private Arm arm = new Arm();
   public Claw claw = new Claw();
-  public ArmNew extension = new ArmNew();
+  public ArmExtension extension = new ArmExtension();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;
