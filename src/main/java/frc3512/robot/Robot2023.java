@@ -4,16 +4,19 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.subsystems.Arm;
 import frc3512.robot.subsystems.ArmExtension;
 import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
+import edu.wpi.first.math.filter.Debouncer;
+
 
 public class Robot2023 {
   // Robot subsystems
-  private Swerve swerve = new Swerve();
+  private Swerve swerve = new Swerve(true);
 
   private Arm arm = new Arm();
   public Claw claw = new Claw();
@@ -36,10 +39,10 @@ public class Robot2023 {
 
   /** Used for defining button actions. */
   public void configureButtonBindings() {
-    driver.x().onTrue(new InstantCommand(() -> swerve.zeroGyro()));
-    driver.leftTrigger().whileTrue(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 1));
-    driver.leftTrigger().whileFalse(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 14.5));
-
+    driver.b().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(swerve::zeroGyro));
+    driver.x().debounce(0.1, Debouncer.DebounceType.kBoth).whileTrue(new RepeatCommand(new InstantCommand(swerve::lock)));
+    driver.leftTrigger().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(swerve::tortoiseMode));
+    driver.leftTrigger().debounce(0.1, Debouncer.DebounceType.kRising).onFalse(new InstantCommand(swerve::hareMode));
     appendage.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     appendage.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
   }
