@@ -1,18 +1,14 @@
-package frc3512.robot;
+package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc3512.robot.subsystems.Arm;
-import frc3512.robot.subsystems.ArmExtension;
-import frc3512.robot.subsystems.Claw;
-import frc3512.robot.subsystems.Swerve;
-import edu.wpi.first.math.filter.Debouncer;
-
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmNew;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Swerve;
 
 public class Robot2023 {
   // Robot subsystems
@@ -20,7 +16,7 @@ public class Robot2023 {
 
   private Arm arm = new Arm();
   public Claw claw = new Claw();
-  public ArmExtension extension = new ArmExtension();
+  public ArmNew extension = new ArmNew();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -39,26 +35,38 @@ public class Robot2023 {
 
   /** Used for defining button actions. */
   public void configureButtonBindings() {
-    driver.b().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(swerve::zeroGyro));
-    driver.x().debounce(0.1, Debouncer.DebounceType.kBoth).whileTrue(new RepeatCommand(new InstantCommand(swerve::lock)));
-    driver.leftTrigger().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(swerve::tortoiseMode));
-    driver.leftTrigger().debounce(0.1, Debouncer.DebounceType.kRising).onFalse(new InstantCommand(swerve::hareMode));
+    driver
+        .b()
+        .debounce(0.1, Debouncer.DebounceType.kBoth)
+        .onTrue(new InstantCommand(swerve::zeroGyro));
+    driver
+        .x()
+        .debounce(0.1, Debouncer.DebounceType.kBoth)
+        .whileTrue(new RepeatCommand(new InstantCommand(swerve::lock)));
+    driver
+        .leftTrigger()
+        .debounce(0.1, Debouncer.DebounceType.kBoth)
+        .onTrue(new InstantCommand(swerve::tortoiseMode));
+    driver
+        .leftTrigger()
+        .debounce(0.1, Debouncer.DebounceType.kRising)
+        .onFalse(new InstantCommand(swerve::hareMode));
     appendage.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     appendage.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
   }
 
   public void periodic() {
-    if(appendage.getRightY() > 0.05) {
+    if (appendage.getRightY() > 0.05) {
       extension.negativeMovement(extension.reachedMinSup);
-    } else if(appendage.getRightY() < -0.05) {
+    } else if (appendage.getRightY() < -0.05) {
       extension.positiveMovement(extension.reachedMaxSup);
     } else {
       extension.stopMovement();
     }
 
-    if(appendage.getLeftY() > 0.05) {
+    if (appendage.getLeftY() > 0.05) {
       arm.simpleArmNegativeMovement(arm.reachedMinSup);
-    } else if(appendage.getLeftY() < -0.05) {
+    } else if (appendage.getLeftY() < -0.05) {
       arm.simpleArmPositiveMovement(arm.reachedMaxSup);
     } else {
       arm.stopMovement();

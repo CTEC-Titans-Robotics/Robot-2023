@@ -1,4 +1,4 @@
-package frc3512.lib.logging;
+package frc.lib.logging;
 
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanSubscriber;

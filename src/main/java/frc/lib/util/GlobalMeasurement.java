@@ -1,4 +1,4 @@
-package frc3512.lib.util;
+package frc.lib.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 

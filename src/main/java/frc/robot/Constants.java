@@ -1,4 +1,4 @@
-package frc3512.robot;
+package frc.robot;
 
 import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -78,30 +78,6 @@ public final class Constants {
     public static final int appendageControllerPort = 1;
   }
 
-  /** Constants revolving around the vision subsystem. */
-  public static final class VisionConstants {
-    // Camera name
-    public static final String cameraName = "OV5647";
-
-    // Robot to camera transform
-    public static final Transform3d robotToCam =
-        new Transform3d(
-            new Translation3d(0.0, Units.inchesToMeters(1.5), Units.inchesToMeters(39.0)),
-            new Rotation3d(0.0, 0.0, 0.0));
-  }
-
-  /** Constants revolving around the elevator subsystem. */
-  public static final class ElevatorConstants {
-    public static final int leftMotorID = 17;
-    public static final int rightMotorID = 18;
-
-    public static final double maxVelocityMeterPerSecond = 1.75;
-    public static final double maxAccelerationMeterPerSecondSquared = 0.75;
-
-    public static final double pGain = 0.0;
-    public static final double iGain = 0.0;
-    public static final double dGain = 0.0;
-  }
 
   /** Constants revolving around the arm subsystem. */
   public static final class ArmConstants {
@@ -116,13 +92,6 @@ public final class Constants {
     public static final double maxAccelerationRadPerSecSquared = 10;
   }
 
-  /** Constants revolving around the intake subsystem. */
-  public static final class IntakeConstants {
-    public static final int intakeMotorID = 21;
-
-    public static final double intakeCurrentThreshold = 40.0;
-  }
-
   /** Constants revolving around auton modes. */
   public static final class AutonConstants {
 
@@ -135,4 +104,67 @@ public final class Constants {
     public static final double xyControllerP = 1.5;
     public static final double thetaControllerP = 1.5;
   }
+
+  public static class Extension {
+    public static final double MIN_POS = 0.5;
+    public static final double MAX_POS = 4.8;
+
+    public static final double ZEROING_CUR = 0.2;
+
+    public static final double kP = 1;
+    public static final double kI = 0;
+    public static final double kD = .5;
+    public static final double kDt = 0.02;
+    public static final double kMaxVelocity = 1;
+    public static final double kMaxAcceleration = 2;
+    public static final double kPosTolerance = 0.26;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+    public static final double kG = 0;
+    public static final double kDistancePerRotation = .01;
+  }
+
+  public static class IDs {
+    // pneumatic hub
+    public static final int PNEUMATIC_CAN_ID = 20;
+    // claw solenoid ports 
+    public static final int CLAW_OPEN_PORT = 0;
+    public static final int CLAW_CLOSE_PORT = 1;
+
+    // arm extension motor controller id
+    public static final int EXTENSION_CAN_ID = 4;
+    public static final int EXTENSION_ENC_ID = 0;
+
+    // TODO: correct
+    // power distribution hub
+    public static final int PDH_CAN_ID = 42;
+
+    // arm
+    public static final int kArmMainCANID = 15;
+    public static final int kArmFollowerCANID = 14;
+    public static final int kArmCancoderCANID = 7;
+
+  }
+
+  public static class Arm {
+    public static final double MIN_POS = 5;
+    public static final double MAX_POS = 95;
+
+    public static final double ZEROING_CUR = 0.2;
+
+    public static final double kP = 1;
+    public static final double kI = 0;
+    public static final double kD = .5;
+    public static final double kDt = 0.02;
+    public static final double kMaxVelocity = 1;
+    public static final double kMaxAcceleration = 2;
+    public static final double kPosTolerance = 2.5;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+    public static final double kG = 0;
+    public static final double kDegreesPerRotation = 360;
+  }
+
 }

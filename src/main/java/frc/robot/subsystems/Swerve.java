@@ -1,4 +1,4 @@
-package frc3512.robot.subsystems;
+package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -6,14 +6,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc3512.robot.Constants;
+import frc.robot.Constants;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
-
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -33,9 +32,8 @@ public class Swerve extends SubsystemBase {
 
   private final Timer m_timer = new Timer();
   private final boolean m_headingCorrection;
-  private       double  m_lastTime = 0;
-  private       double  m_angle = 0;
-
+  private double m_lastTime = 0;
+  private double m_angle = 0;
 
   /** Subsystem class for the swerve drive. */
   public Swerve(boolean p_headingCorrection) {
@@ -53,24 +51,22 @@ public class Swerve extends SubsystemBase {
     this.m_tortoiseAngularVelocity = 1;
 
     this.m_headingCorrection = p_headingCorrection;
-    if (this.m_headingCorrection)
-    {
+    if (this.m_headingCorrection) {
       this.m_lastTime = this.m_timer.get();
     }
+
+    swerve.swerveController.addSlewRateLimiters(translationLimiter, strafeLimiter, rotationLimiter);
   }
-  
 
   public Command drive(
       DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
     return run(() -> {
           double translationVal =
-              translationLimiter.calculate(
                   MathUtil.applyDeadband(
-                      translationSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband));
+                      translationSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband);
           double strafeVal =
-              strafeLimiter.calculate(
                   MathUtil.applyDeadband(
-                      strafeSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband));
+                      strafeSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband);
           // deadband is applied twice, second time in library
           // double rotationVal =
           //     rotationLimiter.calculate(
@@ -79,13 +75,15 @@ public class Swerve extends SubsystemBase {
           translationVal = Math.pow(translationVal, 3);
           strafeVal = Math.pow(strafeVal, 3);
           double rotationVal = Math.pow(rotationSup.getAsDouble(), 3);
-          if (this.m_headingCorrection)
-          {
+          if (this.m_headingCorrection) {
             // Estimate the desired angle in radians.
-            this.m_angle += (rotationVal * (this.m_timer.get() - this.m_lastTime)) * swerve.swerveController.config.maxAngularVelocity;
+            this.m_angle +=
+                (rotationVal * (this.m_timer.get() - this.m_lastTime))
+                    * swerve.swerveController.config.maxAngularVelocity;
             // Get the desired ChassisSpeeds given the desired angle and current angle.
-            ChassisSpeeds correctedChassisSpeeds = swerve.swerveController.getTargetSpeeds(strafeVal, translationVal, rotationVal,
-                                                                              swerve.getYaw().getRadians());
+            ChassisSpeeds correctedChassisSpeeds =
+                swerve.swerveController.getTargetSpeeds(
+                    strafeVal, translationVal, rotationVal, swerve.getYaw().getRadians());
             // Drive using given data points.
             swerve.drive(
                 SwerveController.getTranslation2d(correctedChassisSpeeds),
@@ -93,8 +91,7 @@ public class Swerve extends SubsystemBase {
                 true,
                 false);
             this.m_lastTime = this.m_timer.get();
-          }
-          else {
+          } else {
             drive(
                 new Translation2d(translationVal, strafeVal)
                     .times(swerve.swerveController.config.maxSpeed),

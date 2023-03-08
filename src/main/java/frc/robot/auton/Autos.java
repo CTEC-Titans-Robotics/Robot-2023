@@ -1,4 +1,4 @@
-package frc3512.robot.auton;
+package frc.robot.auton;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
@@ -7,8 +7,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc3512.robot.Constants;
-import frc3512.robot.subsystems.Swerve;
+import frc.robot.Constants;
+import frc.robot.subsystems.Swerve;
+
 import java.util.HashMap;
 
 @SuppressWarnings("unused")

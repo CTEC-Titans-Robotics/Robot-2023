@@ -7,15 +7,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Optional;
 
-/**
- * SwerveIMU interface for the Pigeon.
- */
-public class PigeonSwerve extends SwerveIMU
-{
+/** SwerveIMU interface for the Pigeon. */
+public class PigeonSwerve extends SwerveIMU {
 
-  /**
-   * Pigeon v1 IMU device.
-   */
+  /** Pigeon v1 IMU device. */
   WPI_PigeonIMU imu;
 
   /**
@@ -23,27 +18,20 @@ public class PigeonSwerve extends SwerveIMU
    *
    * @param canid CAN ID for the pigeon, does not support CANBus.
    */
-  public PigeonSwerve(int canid)
-  {
+  public PigeonSwerve(int canid) {
     imu = new WPI_PigeonIMU(canid);
     SmartDashboard.putData(imu);
   }
 
-  /**
-   * Reset IMU to factory default.
-   */
+  /** Reset IMU to factory default. */
   @Override
-  public void factoryDefault()
-  {
+  public void factoryDefault() {
     imu.configFactoryDefault();
   }
 
-  /**
-   * Clear sticky faults on IMU.
-   */
+  /** Clear sticky faults on IMU. */
   @Override
-  public void clearStickyFaults()
-  {
+  public void clearStickyFaults() {
     imu.clearStickyFaults();
   }
 
@@ -53,8 +41,7 @@ public class PigeonSwerve extends SwerveIMU
    * @param yaw Angle in degrees.
    */
   @Override
-  public void setYaw(double yaw)
-  {
+  public void setYaw(double yaw) {
     imu.setYaw(yaw);
   }
 
@@ -64,8 +51,7 @@ public class PigeonSwerve extends SwerveIMU
    * @param yprArray Array which will be filled with {yaw, pitch, roll} in degrees.
    */
   @Override
-  public void getYawPitchRoll(double[] yprArray)
-  {
+  public void getYawPitchRoll(double[] yprArray) {
     imu.getYawPitchRoll(yprArray);
   }
 
@@ -75,22 +61,20 @@ public class PigeonSwerve extends SwerveIMU
    * @return {@link Rotation3d} from the IMU.
    */
   @Override
-  public Rotation3d getRotation3d()
-  {
+  public Rotation3d getRotation3d() {
     double[] wxyz = new double[4];
     imu.get6dQuaternion(wxyz);
     return new Rotation3d(new Quaternion(wxyz[0], wxyz[1], wxyz[2], wxyz[3]));
   }
 
   /**
-   * Fetch the acceleration [x, y, z] from the IMU in meters per second squared. If acceleration isn't supported returns
-   * empty.
+   * Fetch the acceleration [x, y, z] from the IMU in meters per second squared. If acceleration
+   * isn't supported returns empty.
    *
    * @return {@link Translation3d} of the acceleration as an {@link Optional}.
    */
   @Override
-  public Optional<Translation3d> getAccel()
-  {
+  public Optional<Translation3d> getAccel() {
     short[] initial = new short[3];
     imu.getBiasedAccelerometer(initial);
     return Optional.of(new Translation3d(initial[0], initial[1], initial[2]).times(9.81 / 16384.0));
@@ -102,8 +86,7 @@ public class PigeonSwerve extends SwerveIMU
    * @return IMU object.
    */
   @Override
-  public Object getIMU()
-  {
+  public Object getIMU() {
     return imu;
   }
 }

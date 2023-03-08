@@ -1,7 +1,7 @@
-package frc3512.lib.logging;
+package frc.lib.logging;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc3512.robot.Constants;
+import frc.robot.Constants;
 
 /** Wrapper class around the DataLogManager for additional features. */
 public class SpartanEntryManager {
