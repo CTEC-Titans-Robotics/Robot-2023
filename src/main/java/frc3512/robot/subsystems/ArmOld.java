@@ -5,6 +5,7 @@ import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,22 +14,22 @@ import frc3512.lib.util.CANCoderUtil;
 import frc3512.robot.Constants;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
-public class Arm extends SubsystemBase {
+public class ArmOld extends SubsystemBase {
     public static final CANSparkMax followerMotor = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
     public static final CANSparkMax leaderMotor = new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
     private static final SparkMaxPIDController followerPIDMotor = followerMotor.getPIDController();
-    private static final SparkMaxPIDController mainPIDMotor = leaderMotor.getPIDController();
-    private static final ArmFeedforward armFeedForward = new ArmFeedforward(1.75,2,6);
+    public static final SparkMaxPIDController mainPIDMotor = leaderMotor.getPIDController();
+    private static final ArmFeedforward armFeedForward = new ArmFeedforward(0.081228,0.11788,4.8424, 0.076763);
     public static final SparkMaxAbsoluteEncoder GearboxEncoder = followerMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    public static final CANCoder rotationEncoder = new CANCoder(7);
+    public static final CANCoder topEncoder = new CANCoder(7);
 
-
-    private static double kP = 5;
-    private static double kI = 1;
+    private static double kP = .0000011903;
+    private static double kI = .0000010902;
     private static double kD = 0;
     private static double kIz = 0;
-    private static double kFF = 0;
+    private static double kFF;
     private static double kMaxOutput = 1;
     private static double kMinOutput = -1;
     private static double minVel = -0.1;
@@ -48,12 +49,14 @@ public class Arm extends SubsystemBase {
     
 
 
-    public Arm() {
+    public ArmOld() {
         
+        SmartDashboard.putBoolean("zeroing init", false);
+
         initDashboard();
         followerMotor.follow(leaderMotor);
         armConfigAngleEncoder();
-        /*
+        
     
         mainPIDMotor.setP(kP);
         mainPIDMotor.setI(kI);
@@ -64,13 +67,15 @@ public class Arm extends SubsystemBase {
         mainPIDMotor.setPositionPIDWrappingEnabled(true);
         mainPIDMotor.setPositionPIDWrappingMaxInput(maxPos);
         mainPIDMotor.setPositionPIDWrappingMinInput(minPos);
-        */
+
+        GearboxEncoder.setPositionConversionFactor(8192);
+        
     }
 
-   /* private void moveToPos(DoubleSupplier position, DoubleSupplier vel, DoubleSupplier accel) {
-        double defaultVel = 0.5;
+    public void moveToPos(DoubleSupplier position, DoubleSupplier vel, DoubleSupplier accel) {
+        double defaultVel = 0.7;
         double defaultAccel = 0;
-        REVLibError res = mainPIDMotor.setFF(armFeedForward.calculate(position.getAsDouble(),
+        REVLibError res = mainPIDMotor.setFF(armFeedForward.calculate((position.getAsDouble())*(Math.PI/180),
                 vel == null ? defaultVel : vel.getAsDouble(),
                 accel == null ? defaultAccel : accel.getAsDouble()));
         if(res.value != REVLibError.kOk.value) {
@@ -82,7 +87,7 @@ public class Arm extends SubsystemBase {
     public Command move(DoubleSupplier position, DoubleSupplier vel, DoubleSupplier accel) {
         return run(() -> moveToPos(position, vel, accel));
     }
-*/
+
 private void armConfigAngleEncoder() {
     CANCoderConfiguration armconfig = new CANCoderConfiguration();
     armconfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
@@ -90,11 +95,11 @@ private void armConfigAngleEncoder() {
     armconfig.sensorTimeBase = SensorTimeBase.PerSecond;
     armconfig.sensorCoefficient = 0.087890625;
 
-    rotationEncoder.configFactoryDefault();
-    rotationEncoder.configAllSettings(armconfig);
-    CANCoderUtil.setCANCoderBusUsage(rotationEncoder, CANCoderUtil.CANCoderUsage.kMinimal);
+    topEncoder.configFactoryDefault();
+    topEncoder.configAllSettings(armconfig);
+    CANCoderUtil.setCANCoderBusUsage(topEncoder, CANCoderUtil.CANCoderUsage.kMinimal);
 
-    rotationEncoder.setPositionToAbsolute();
+    topEncoder.setPositionToAbsolute();
     followerMotor.setIdleMode(IdleMode.kBrake);
     leaderMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -121,15 +126,15 @@ private void armConfigAngleEncoder() {
         SmartDashboard.putBoolean("Mode", true);
 
         //encoder value
-        double armAngle = rotationEncoder.getAbsolutePosition() - angleCANOffset;
-        SmartDashboard.putNumber("Rotation Encoder", rotationEncoder.getAbsolutePosition());
+        double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
+        SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
         SmartDashboard.putNumber("Arm Angle", armAngle);
     }
     
     public void periodic() {
         initDashboard();
-        double armAngle = rotationEncoder.getAbsolutePosition() - angleCANOffset;
-        SmartDashboard.putNumber("Rotation Encoder", rotationEncoder.getAbsolutePosition());
+        double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
+        SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
         SmartDashboard.putNumber("Arm Angle", armAngle);
         SmartDashboard.putBoolean("reachedMax", reachedMax);
 
@@ -147,7 +152,7 @@ private void armConfigAngleEncoder() {
 
         //PID CODE START
 
-      /*  // read PID coefficients from SmartDashboard
+        // read PID coefficients from SmartDashboard
         double p = SmartDashboard.getNumber("P Gain", 0);
         double i = SmartDashboard.getNumber("I Gain", 0);
         double d = SmartDashboard.getNumber("D Gain", 0);
@@ -186,14 +191,28 @@ private void armConfigAngleEncoder() {
              * As with other PID modes, Smart Motion is set by calling the
              * setReference method on an existing pid object and setting
              * the control type to kSmartMotion
-             
+              */
             mainPIDMotor.setReference(setPoint, CANSparkMax.ControlType.kPosition);
             
-        }*/ 
+        } 
 
         // PID CODE END
 
     } 
+
+    public void zeroingProtocol() {
+         SmartDashboard.putBoolean("zeroing init", true);
+        limitSwitch.enableLimitSwitch(false);
+        while (!limitSwitch.isPressed()) {
+            leaderMotor.set(-0.05);
+        }
+            GearboxEncoder.setZeroOffset(GearboxEncoder.getPosition());
+            leaderMotor.set(0.05);
+            Timer.delay(.5);
+            leaderMotor.set(0);
+            mainPIDMotor.setReference(21.5, CANSparkMax.ControlType.kPosition);
+      }
+
     public void simpleArmPositiveMovement(BooleanSupplier max){
         if(!max.getAsBoolean()) {
             leaderMotor.set(0.4);

@@ -118,6 +118,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robot.armTest();
   }
 
   /** This function is called periodically during operator control. */

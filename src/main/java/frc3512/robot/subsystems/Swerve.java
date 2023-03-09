@@ -24,6 +24,11 @@ public class Swerve extends SubsystemBase {
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(20.0);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(20.0);
 
+  private final double m_tortoiseSpeed;
+  private final double m_tortoiseAngularVelocity;
+
+  private final double m_hareSpeed;
+  private final double m_hareAngularVelocity;
   /** Subsystem class for the swerve drive. */
   public Swerve() {
     try {
@@ -32,6 +37,12 @@ public class Swerve extends SubsystemBase {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+
+    this.m_hareSpeed = swerve.swerveController.config.maxSpeed;
+    this.m_hareAngularVelocity = swerve.swerveController.config.maxAngularVelocity;
+
+    this.m_tortoiseSpeed = .75;
+    this.m_tortoiseAngularVelocity = 1;
   }
 
   public Command drive(
@@ -94,5 +105,15 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     swerve.updateOdometry();
+  }
+
+  public void tortoiseMode() {
+    swerve.swerveController.config.maxSpeed = m_tortoiseSpeed;
+    swerve.swerveController.config.maxAngularVelocity = m_tortoiseAngularVelocity;
+  }
+
+  public void hareMode() {
+    swerve.swerveController.config.maxSpeed = m_hareSpeed;
+    swerve.swerveController.config.maxAngularVelocity = m_hareAngularVelocity;
   }
 }
