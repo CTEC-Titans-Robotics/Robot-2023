@@ -20,9 +20,9 @@ import swervelib.parser.SwerveParser;
 public class Swerve extends SubsystemBase {
   public final SwerveDrive swerve;
 
-  private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
-  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
-  private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
+  private SlewRateLimiter translationLimiter = new SlewRateLimiter(20.0);
+  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(20.0);
+  private SlewRateLimiter rotationLimiter = new SlewRateLimiter(20.0);
 
   /** Subsystem class for the swerve drive. */
   public Swerve() {
@@ -40,16 +40,18 @@ public class Swerve extends SubsystemBase {
           double translationVal =
               translationLimiter.calculate(
                   MathUtil.applyDeadband(
-                      translationSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband));
+                      translationSup.getAsDouble(), 0.1));
           double strafeVal =
               strafeLimiter.calculate(
                   MathUtil.applyDeadband(
-                      strafeSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband));
+                      strafeSup.getAsDouble(), 0.1));
           double rotationVal =
               rotationLimiter.calculate(
                   MathUtil.applyDeadband(
-                      rotationSup.getAsDouble(), Constants.GeneralConstants.swerveDeadband));
-
+                      rotationSup.getAsDouble(), 0.1));
+          translationVal= Math.pow(translationVal, 3);
+          strafeVal= Math.pow(strafeVal, 3);
+          rotationVal= Math.pow(rotationVal, 3);
           drive(
               new Translation2d(translationVal, strafeVal)
                   .times(swerve.swerveController.config.maxSpeed),

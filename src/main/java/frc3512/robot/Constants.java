@@ -58,7 +58,7 @@ public final class Constants {
     // Joystick axis deadband for the swerve drive
     public static final double swerveDeadband = 0.1;
 
-    public static final double voltageComp = 12.0;
+    public static final double voltageComp = 12.5;
 
     // Hold time on motor brakes when disabled
     public static final double wheelLockTime = 10;
