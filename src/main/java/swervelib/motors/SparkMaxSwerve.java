@@ -151,7 +151,7 @@ public class SparkMaxSwerve extends SwerveMotor {
 
       // Taken from
       // https://github.com/frc3512/SwerveBot-2022/blob/9d31afd05df6c630d5acb4ec2cf5d734c9093bf8/src/main/java/frc/lib/util/CANSparkMaxUtil.java#L67
-      configureCANStatusFrames(10, 20, 20, 500, 500);
+      configureCANStatusFrames(10, 20, 20, 500, 500, 500, 500);
     } else {
       absoluteEncoder.setPositionConversionFactor(positionConversionFactor);
       absoluteEncoder.setVelocityConversionFactor(positionConversionFactor / 60);
@@ -198,14 +198,20 @@ public class SparkMaxSwerve extends SwerveMotor {
    * @param CANStatus4 Alternate Encoder Velocity, Alternate Encoder Position
    */
   public void configureCANStatusFrames(
-      int CANStatus0, int CANStatus1, int CANStatus2, int CANStatus3, int CANStatus4) {
+      int CANStatus0,
+      int CANStatus1,
+      int CANStatus2,
+      int CANStatus3,
+      int CANStatus4,
+      int CANStatus5,
+      int CANStatus6) {
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, CANStatus0);
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, CANStatus1);
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, CANStatus2);
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, CANStatus3);
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, CANStatus4);
-    // TODO: Configure Status Frame 5 and 6 if necessary
-    //  https://docs.revrobotics.com/sparkmax/operating-modes/control-interfaces
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, CANStatus5);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, CANStatus6);
   }
 
   /**

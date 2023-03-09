@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.List;
 import swervelib.SwerveController;
 import swervelib.SwerveModule;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -137,20 +136,25 @@ public class SwerveMath {
    *
    * @param angle The direction in which to calculate max acceleration, as a Rotation2d. Note that
    *     this is robot-relative.
-   * @param matter Matter that the robot is composed of in kg. (Includes chassis)
+   * @param chassisMass Chassis mass in kg. (The weight of just the chassis not anything else)
    * @param robotMass The weight of the robot in kg. (Including manipulators, etc).
+   * @param chassisCenterOfGravity Chassis center of gravity.
    * @param config The swerve drive configuration.
    * @return Maximum acceleration allowed in the robot direction.
    */
   private static double calcMaxAccel(
-      Rotation2d angle, List<Matter> matter, double robotMass, SwerveDriveConfiguration config) {
+      Rotation2d angle,
+      double chassisMass,
+      double robotMass,
+      Translation3d chassisCenterOfGravity,
+      SwerveDriveConfiguration config) {
+    double xMoment = (chassisCenterOfGravity.getX() * chassisMass);
+    double yMoment = (chassisCenterOfGravity.getY() * chassisMass);
     // Calculate the vertical mass moment using the floor as the datum.  This will be used later to
-    // calculate max acceleration
-    Translation3d centerMass = new Translation3d();
-    for (Matter object : matter) {
-      centerMass = centerMass.plus(object.massMoment());
-    }
-    Translation3d robotCG = centerMass.div(robotMass);
+    // calculate max
+    // acceleration
+    double zMoment = (chassisCenterOfGravity.getZ() * (chassisMass));
+    Translation3d robotCG = new Translation3d(xMoment, yMoment, zMoment).div(robotMass);
     Translation2d horizontalCG = robotCG.toTranslation2d();
 
     Translation2d projectedHorizontalCg =
@@ -198,15 +202,17 @@ public class SwerveMath {
 
   /**
    * Limits a commanded velocity to prevent exceeding the maximum acceleration given by {@link
-   * SwerveMath#calcMaxAccel}. Note that this takes and returns field-relative velocities.
+   * SwerveMath#calcMaxAccel(Rotation2d, double, double, Translation3d, SwerveDriveConfiguration)}.
+   * Note that this takes and returns field-relative velocities.
    *
    * @param commandedVelocity The desired velocity
    * @param fieldVelocity The velocity of the robot within a field relative state.
    * @param robotPose The current pose of the robot.
    * @param loopTime The time it takes to update the velocity in seconds. <b>Note: this should
    *     include the 100ms that it takes for a SparkMax velocity to update.</b>
-   * @param matter Matter that the robot is composed of with position in meters and mass in kg.
+   * @param chassisMass Chassis mass in kg. (The weight of just the chassis not anything else)
    * @param robotMass The weight of the robot in kg. (Including manipulators, etc).
+   * @param chassisCenterOfGravity Chassis center of gravity.
    * @param config The swerve drive configuration.
    * @return The limited velocity. This is either the commanded velocity, if attainable, or the
    *     closest attainable velocity.
@@ -216,8 +222,9 @@ public class SwerveMath {
       ChassisSpeeds fieldVelocity,
       Pose2d robotPose,
       double loopTime,
+      double chassisMass,
       double robotMass,
-      List<Matter> matter,
+      Translation3d chassisCenterOfGravity,
       SwerveDriveConfiguration config) {
     // Get the robot's current field-relative velocity
     Translation2d currentVelocity = SwerveController.getTranslation2d(fieldVelocity);
@@ -237,8 +244,9 @@ public class SwerveMath {
                     // Rotates the velocity vector to convert from field-relative to robot-relative
                     .rotateBy(robotPose.getRotation().unaryMinus())
                     .getAngle(),
-                matter,
+                chassisMass,
                 robotMass,
+                chassisCenterOfGravity,
                 config),
             deltaV.getAngle());
 
