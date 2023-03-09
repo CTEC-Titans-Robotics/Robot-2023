@@ -12,9 +12,12 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.lib.util.CANCoderUtil;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
+import java.util.function.DoubleSupplier;
 
 public class ArmNew extends ProfiledPIDSubsystem {
   public static final CANSparkMax m_mainController =
@@ -31,11 +34,15 @@ public class ArmNew extends ProfiledPIDSubsystem {
           Constants.Extension.kS, Constants.Extension.kG,
           Constants.Extension.kV, Constants.Extension.kA);
 
+  private final TrapezoidProfile.State High = new State(ArmConstants.highGoalPosition, 6);
+  private final TrapezoidProfile.State Mid = new State(ArmConstants.midGoalPosition, 6);
+  private final TrapezoidProfile.State Low = new State(ArmConstants.lowGoalPosition, 6);
+
   public ArmNew() {
     super(
         new ProfiledPIDController(
-            Constants.Extension.kP,
-            Constants.Extension.kI,
+            Constants.Arm.kP,
+            Constants.Arm.kI,
             Constants.Extension.kD,
             new TrapezoidProfile.Constraints(
                 Constants.Extension.kMaxVelocity, Constants.Extension.kMaxAcceleration),
@@ -89,5 +96,9 @@ public class ArmNew extends ProfiledPIDSubsystem {
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
     m_mainController.setVoltage(output + feedforward);
+  }
+
+  public void incrementing(DoubleSupplier yAxis) {
+    setGoal(yAxis.getAsDouble());
   }
 }

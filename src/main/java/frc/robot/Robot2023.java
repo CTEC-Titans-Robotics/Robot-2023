@@ -2,11 +2,12 @@ package frc.robot;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmExtension;
+import frc.robot.subsystems.ArmNew;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Swerve;
 
@@ -14,8 +15,9 @@ public class Robot2023 {
   // Robot subsystems
   private Swerve swerve = new Swerve(true);
 
-  private Arm m_arm = new Arm();
+  // private Arm m_arm = new Arm();
   public Claw claw = new Claw();
+  public ArmNew m_arm_n = new ArmNew();
   public ArmExtension m_armExtension = new ArmExtension();
 
   // Driver Control
@@ -51,12 +53,25 @@ public class Robot2023 {
         .leftTrigger()
         .debounce(0.1, Debouncer.DebounceType.kRising)
         .onFalse(new InstantCommand(swerve::hareMode));
+
     m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
-
-    // commands for new implementations of appendages
+    // Magic buttons in theory 53.2
     // m_appendageController
-    //   .a()
+    //     .y()
+    //     .debounce(0.1, Debouncer.DebounceType.kBoth)
+    //     .onTrue(new InstantCommand(m_arm_n::setHighGoal));
+    //  m_appendageController
+    //     .x()
+    //     .debounce(0.1, Debouncer.DebounceType.kBoth)
+    //     .onTrue(new InstantCommand(m_arm_n::setMidGoal));
+    // m_appendageController
+    //     .a()
+    //     .debounce(0.1, Debouncer.DebounceType.kBoth)
+    //     .onTrue(new InstantCommand(m_arm_n::setLowGoal));
+    // // commands for new implementations of appendages
+    //  m_appendageController
+    //    .a()
     //       .onTrue(
     //           Commands.runOnce(
     //               () -> {
@@ -74,43 +89,42 @@ public class Robot2023 {
     //               },
     //               m_armExtension));
 
-    // m_appendageController
-    //   .x()
-    //       .onTrue(
-    //           Commands.runOnce(
-    //               () -> {
-    //                 m_arm.setGoal(Constants.Arm.MIN_POS);
-    //                 m_arm.enable();
-    //               },
-    //               m_arm));
-    // m_appendageController
-    //   .y()
-    //       .onTrue(
-    //           Commands.runOnce(
-    //               () -> {
-    //                 m_arm.setGoal(Constants.Arm.MAX_POS);
-    //                 m_arm.enable();
-    //               },
-    //               m_arm));
-
+    m_appendageController
+        .x()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  m_arm_n.setGoal(Constants.Arm.MIN_POS);
+                  m_arm_n.enable();
+                },
+                m_arm_n));
+    m_appendageController
+        .y()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  m_arm_n.setGoal(Constants.Arm.MAX_POS);
+                  m_arm_n.enable();
+                },
+                m_arm_n));
   }
 
   public void periodic() {
-    if (m_appendageController.getRightY() > 0.05) {
-      m_armExtension.negativeMovement(m_armExtension.reachedMinSup);
-    } else if (m_appendageController.getRightY() < -0.05) {
-      m_armExtension.positiveMovement(m_armExtension.reachedMaxSup);
-    } else {
-      m_armExtension.stopMovement();
-    }
+    // if (m_appendageController.getRightY() > 0.05) {
+    //   m_armExtension.negativeMovement(m_armExtension.reachedMinSup);
+    // } else if (m_appendageController.getRightY() < -0.05) {
+    //   m_armExtension.positiveMovement(m_armExtension.reachedMaxSup);
+    // } else {
+    //   m_armExtension.stopMovement();
+    // }
 
-    if (m_appendageController.getLeftY() > 0.05) {
-      m_arm.simpleArmNegativeMovement(m_arm.reachedMinSup);
-    } else if (m_appendageController.getLeftY() < -0.05) {
-      m_arm.simpleArmPositiveMovement(m_arm.reachedMaxSup);
-    } else {
-      m_arm.stopMovement();
-    }
+    // if (m_appendageController.getLeftY() > 0.05) {
+    //   m_arm.simpleArmNegativeMovement(m_arm.reachedMinSup);
+    // } else if (m_appendageController.getLeftY() < -0.05) {
+    //   m_arm.simpleArmPositiveMovement(m_arm.reachedMaxSup);
+    // } else {
+    //   m_arm.stopMovement();
+    // }
   }
 
   /** Used for joystick/xbox axis actions. */

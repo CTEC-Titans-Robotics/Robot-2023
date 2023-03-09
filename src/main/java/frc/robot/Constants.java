@@ -87,6 +87,10 @@ public final class Constants {
 
     public static final double maxVelocityRadPerSecond = 3;
     public static final double maxAccelerationRadPerSecSquared = 10;
+
+    public static final double highGoalPosition = -79;
+    public static final double midGoalPosition = -10;
+    public static final double lowGoalPosition = 10;
   }
 
   /** Constants revolving around auton modes. */
@@ -152,17 +156,17 @@ public final class Constants {
 
     public static final double ZEROING_CUR = 0.2;
 
-    public static final double kP = 0.93595;
+    public static final double kP = 0.057085;
     public static final double kI = 0;
-    public static final double kD = .47869;
+    public static final double kD = .016142;
     public static final double kDt = 0.02;
     public static final double kMaxVelocity = 1;
     public static final double kMaxAcceleration = 2;
     public static final double kPosTolerance = 2.5;
-    public static final double kS = 0.070322;
-    public static final double kV = 0.074204;
-    public static final double kA = 0.048675;
-    public static final double kG = 0.80781;
+    public static final double kS = 0.085209;
+    public static final double kV = 0.084005;
+    public static final double kA = 0.0012921;
+    public static final double kG = 0.14647;
     public static final double kDegreesPerRotation = 360;
   }
 }
