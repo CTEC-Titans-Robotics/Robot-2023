@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANCoderUtil;
-
 import java.util.function.BooleanSupplier;
 
 public class Arm extends SubsystemBase {

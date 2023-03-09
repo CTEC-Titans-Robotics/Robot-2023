@@ -3,8 +3,6 @@ package frc.robot;
 import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -78,7 +76,6 @@ public final class Constants {
     public static final int appendageControllerPort = 1;
   }
 
-
   /** Constants revolving around the arm subsystem. */
   public static final class ArmConstants {
     public static final int leftMotorID = 19;
@@ -128,7 +125,7 @@ public final class Constants {
   public static class IDs {
     // pneumatic hub
     public static final int PNEUMATIC_CAN_ID = 20;
-    // claw solenoid ports 
+    // claw solenoid ports
     public static final int CLAW_OPEN_PORT = 0;
     public static final int CLAW_CLOSE_PORT = 1;
 
@@ -144,27 +141,28 @@ public final class Constants {
     public static final int kArmMainCANID = 14;
     public static final int kArmFollowerCANID = 15;
     public static final int kArmCancoderCANID = 7;
-
   }
 
   public static class Arm {
+    // 2,5 deg error position
+    // 5 deg/s velocity error
+    // 6v max output
     public static final double MIN_POS = 5;
     public static final double MAX_POS = 95;
 
     public static final double ZEROING_CUR = 0.2;
 
-    public static final double kP = 1;
+    public static final double kP = 0.93595;
     public static final double kI = 0;
-    public static final double kD = .5;
+    public static final double kD = .47869;
     public static final double kDt = 0.02;
     public static final double kMaxVelocity = 1;
     public static final double kMaxAcceleration = 2;
     public static final double kPosTolerance = 2.5;
-    public static final double kS = 0;
-    public static final double kV = 0;
-    public static final double kA = 0;
-    public static final double kG = 0;
+    public static final double kS = 0.070322;
+    public static final double kV = 0.074204;
+    public static final double kA = 0.048675;
+    public static final double kG = 0.80781;
     public static final double kDegreesPerRotation = 360;
   }
-
 }
