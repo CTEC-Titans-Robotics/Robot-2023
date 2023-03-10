@@ -3,6 +3,9 @@ package frc3512.robot.auton;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,7 +38,7 @@ public final class Autos {
             true,
             swerve);
 
-    autonChooser = new SendableChooser<Command>();
+    autonChooser = new SendableChooser<>();
     autonChooser.setDefaultOption("No-op", new InstantCommand());
     autonChooser.addOption("Bottom Lane Main", bottomLaneMain());
     autonChooser.addOption("Bottom Lane Secondary", bottomLaneSecondary());
@@ -52,8 +55,26 @@ public final class Autos {
         PathPlanner.loadPath("Bottom Lane Main", Constants.AutonConstants.constraints));
   }
 
+  public Command levelOut() {
+    return new InstantCommand(() -> {
+      while(true) {
+        Rotation2d rot = swerve.getGyroRot();
+        if(rot.getDegrees() <= 0.4 || rot.getDegrees() >= -0.4) {
+          break;
+        }
+        double dir;
+        if(rot.getDegrees() > 0.4) {
+          dir = -0.0254;
+        } else {
+          dir = 0.0254;
+        }
+        swerve.drive(new Translation2d(0, dir), 0, true, false);
+      }
+    });
+  }
+
   public Command bottomLaneSecondary() {
     return autonBuilder.fullAuto(
-            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints));
+            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints)).andThen(levelOut());
   }
 }
