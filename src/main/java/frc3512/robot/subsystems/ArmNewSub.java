@@ -14,7 +14,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc3512.lib.util.CANCoderUtil;
@@ -26,7 +25,7 @@ import edu.wpi.first.wpilibj.Encoder
 
 import java.util.function.DoubleSupplier;
 
-public class ArmNew extends SubsystemBase {
+public class ArmNewSub extends ProfiledPIDSubsystem {
 //motors
   public static final CANSparkMax m_mainController =
       new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -58,8 +57,15 @@ public class ArmNew extends SubsystemBase {
    private final TrapezoidProfile.State Mid = new State(ArmConstants.midGoalPosition, 0);
    private final TrapezoidProfile.State Low = new State(ArmConstants.lowGoalPosition, 0);
 
-  public ArmNew() {
-    //m_rotationEncoder.setDistancePerPulse(1/2048);
+  public ArmNewSub() {
+    super(new ProfiledPIDController(
+      Constants.Arm.kP,
+      Constants.Arm.kI,
+      Constants.Arm.kD,
+      new TrapezoidProfile.Constraints(
+          Constants.Arm.kMaxVelocity, Constants.Arm.kMaxAcceleration),
+      Constants.Arm.kDt));
+    
     m_pidController.setTolerance(Constants.Arm.kPosTolerance, Constants.Arm.kVelTolerance);
 
     m_mainController.setIdleMode(IdleMode.kBrake);
@@ -93,53 +99,38 @@ public class ArmNew extends SubsystemBase {
     }
     m_mainController.set(0);
     m_rotationEncoder.reset();
-      
   }
 
-  public static double getMeasurement() {
+  public double getMeasurement() {
     // TODO: set distance conversion
     return m_rotationEncoder.get();
   }
 
-  
-  public void useOutput(TrapezoidProfile.State setpoint) {
+  @Override
+  public void useOutput(double output, TrapezoidProfile.State setpoint) {
     // Calculate the feedforward from the sepoint
     // double feedforward = m_feedforward.calculate(setpoint.position * (Math.PI / 180), setpoint.velocity);
 
     // Add the feedforward to the PID output to get the motor output
-    double test = m_pidController.calculate(getDistance(), setpoint);
+    double test = output;
+    double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
+
     SmartDashboard.putNumber("PID VOLTAGE", test);
     // SmartDashboard.putNumber("FEEDFOWARD VOLTAGE", feedforward);
     if ((test <= 1 && test >= -1)) test = 0;
     if (test >= 8) test = 8;
     if (test <= -8) test = -8;
-    m_mainController.setVoltage(test + 0);
+    m_mainController.setVoltage(test + feedforward);
   }
 
-  public void incrementing(DoubleSupplier yAxis) {
+  public void incrementing(Double yAxis) {
 
   }
   public double getDistance() {
     return (m_rotationEncoder.get()/2048) * (360/53.2);
   }
 
-  public void setHigh() {
-    useOutput(High);
-  }
-  public void setMid() {
-    useOutput(Mid);
-  }
-  public void setLow() {
-    useOutput(Low);
-  }
+  
 
-  public Command setLowCommand(){
-    return run(() -> setLow());
-  }
-  public Command setMidCommand(){
-    return run(() -> setMid());
-  }
-  public Command setHighCommand(){
-    return run(() -> setHigh());
-  }
+  
 }

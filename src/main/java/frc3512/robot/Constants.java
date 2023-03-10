@@ -105,6 +105,7 @@ public final class Constants {
 
   /** Constants revolving around the arm subsystem. */
   public static final class ArmConstants {
+    public static final double offset = 10; 
     public static final int leftMotorID = 19;
     public static final int rightMotorID = 20;
 
@@ -114,6 +115,11 @@ public final class Constants {
 
     public static final double maxVelocityRadPerSecond = 3;
     public static final double maxAccelerationRadPerSecSquared = 10;
+
+    public static final double highGoalPosition = 95 - offset;
+    public static final double midGoalPosition =  70 - offset;
+    public static final double lowGoalPosition = 45 - offset;
+ 
   }
 
   /** Constants revolving around the intake subsystem. */
@@ -166,17 +172,19 @@ public final class Constants {
 
     public static final double ZEROING_CUR = 0.2;
 
-    public static final double kP = 0.057085;
+    public static final double kP = 0.33617;
     public static final double kI = 0;
-    public static final double kD = .016142;
+    public static final double kD = 0.094215;
     public static final double kDt = 0.02;
-    public static final double kMaxVelocity = 1;
-    public static final double kMaxAcceleration = 2;
-    public static final double kPosTolerance = 2.5;
-    public static final double kS = 0.085209;
-    public static final double kV = 0.084005;
-    public static final double kA = 0.0012921;
-    public static final double kG = 0.14647;
+    public static final double kMaxVelocity = 40; // 60
+    public static final double kMaxAcceleration = 50; // 75
+    public static final double kPosTolerance = 5;
+    public static final double kVelTolerance = 10;
+    public static final double kMaxControlEffort = 8;
+    public static final double kS = 0.13079;
+    public static final double kV = 0.081283;
+    public static final double kA = 0.002638;
+    public static final double kG = 0.14759;
     public static final double kDegreesPerRotation = 360;
   }
 }

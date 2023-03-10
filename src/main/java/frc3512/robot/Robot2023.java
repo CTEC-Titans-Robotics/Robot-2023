@@ -4,6 +4,7 @@ import com.revrobotics.ControlType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -11,9 +12,14 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.Constants.Arm;
-import frc3512.robot.subsystems.ArmOld;
+import edu.wpi.first.wpilibj.XboxController;
+//import frc3512.robot.subsystems.ArmOld;
 // import frc3512.robot.subsystems.Arm;
-import frc3512.robot.subsystems.ArmExtension;
+//import frc3512.robot.subsystems.ArmExtension;
+import frc3512.robot.subsystems.ArmNew;
+//import frc3512.robot.subsystems.ArmNewSub;
+//import frc3512.robot.subsystems.ArmV3;
+//import frc3512.robot.subsystems.ArmV3;
 //import frc3512.robot.subsystems.ArmNew;
 import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
@@ -25,10 +31,11 @@ public class Robot2023 {
   // Robot subsystems
   private Swerve swerve = new Swerve();
 
-  private ArmOld m_armo = new ArmOld();
+  //private ArmOld m_armo = new ArmOld();
+  private ArmNew m_arm = new ArmNew();
   //private ArmNew m_arm = new ArmNew();
   public Claw claw = new Claw();
-  public ArmExtension extension = new ArmExtension();
+  //public ArmExtension extension = new ArmExtension();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -40,6 +47,7 @@ public class Robot2023 {
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
   private final CommandXboxController m_appendageController =
       new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
+  private static XboxController appendageXbox = new XboxController(1); 
 
   public void setMotorBrake(boolean brake) {
     swerve.setMotorBrake(brake);
@@ -48,8 +56,8 @@ public class Robot2023 {
   /** Used for defining button actions. */
   public void configureButtonBindings() {
     m_driverController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.zeroGyro()));
-    // driver.leftTrigger().whileTrue(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 1));
-    // driver.leftTrigger().whileFalse(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 14.5));
+    m_driverController.leftTrigger().whileTrue(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 1));
+    m_driverController.leftTrigger().whileFalse(new InstantCommand(() -> swerve.swerve.swerveController.config.maxSpeed = 14.5));
 
     m_driverController
       .leftTrigger()
@@ -63,37 +71,47 @@ public class Robot2023 {
     .x()
     .debounce(0.1, Debouncer.DebounceType.kBoth)
     .onTrue(new InstantCommand(swerve::lock));
+
     m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
 
-    // m_appendageController
-    //     .x()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               m_arm.setGoal(Constants.Arm.MIN_POS);
-    //               m_arm.enable();
-    //             },
-    //             m_arm));
-    // m_appendageController
-    //     .y()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               m_arm.setGoal(Constants.Arm.MAX_POS);
-    //               m_arm.enable();
-    //             },
-    //             m_arm));
-  }
+    m_appendageController
+      .a()
+      .debounce(0.1, Debouncer.DebounceType.kBoth)
+      .onTrue(m_arm.setLowCommand());
+      
+    m_appendageController
+    .x()
+    .debounce(0.1, Debouncer.DebounceType.kBoth)
+    .onTrue(m_arm.setMidCommand());
 
-  public void periodic() {
-    if(m_appendageController.getRightY() > 0.05) {
-      extension.negativeMovement(extension.reachedMinSup);
-    } else if(m_appendageController.getRightY() < -0.05) {
-      extension.positiveMovement(extension.reachedMaxSup);
-    } else {
-      extension.stopMovement();
-    }
+    m_appendageController
+      .y()
+      .debounce(0.1, Debouncer.DebounceType.kBoth)
+      .onTrue(m_arm.setHighCommand());
+  }
+    
+
+  public void periodic(
+
+  ) {
+    // if(appendageXbox.getAButton()) {
+    //   m_arm.setLow();
+    // }
+    // if(appendageXbox.getXButton()) {
+    //   m_arm.setMid();
+    // }
+    // if(appendageXbox.getYButton()) {
+    //   m_arm.setHigh();
+    // }
+    // if(m_appendageController.getRightY() > 0.05) {
+    //   extension.negativeMovement(extension.reachedMinSup);
+    // } else if(m_appendageController.getRightY() < -0.05) {
+    //   extension.positiveMovement(extension.reachedMaxSup);
+    // } else {
+    //   extension.stopMovement();
+    // }
+    //SmartDashboard.putNumber("Gearbox Throughbore", m_arm.m_rotationEncoder.get());
 
     // if(appendage.getLeftY() > 0.05) {
     //   arm.simpleArmNegativeMovement(arm.reachedMinSup);
@@ -104,7 +122,7 @@ public class Robot2023 {
     // }
   }
 
-  /** Used for joystick/xbox axis actions. */
+  /* Used for joystick/xbox axis actions. */
   public void configureAxisActions() {
     swerve.setDefaultCommand(
         swerve.drive(
@@ -114,9 +132,12 @@ public class Robot2023 {
   }
 
   public void armTest() {
-    m_armo.zeroingProtocol();
+    m_arm.zeroingProtocol();
   }
-
+  public void armPrint (){
+    SmartDashboard.putNumber("Gearbox Throughbore", m_arm.getDistance());
+    m_arm.setLow();
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

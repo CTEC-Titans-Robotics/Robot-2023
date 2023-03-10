@@ -115,23 +115,25 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_robot.armTest();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robot.armTest();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     m_robot.periodic();
+    //m_robot.armPrint();
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-
+    m_robot.armTest();
+    
     try {
       new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
     } catch (IOException e) {
@@ -141,7 +143,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robot.armPrint();
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
