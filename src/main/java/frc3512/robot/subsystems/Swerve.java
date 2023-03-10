@@ -3,6 +3,8 @@ package frc3512.robot.subsystems;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -84,6 +86,10 @@ public class Swerve extends SubsystemBase {
 
   public void setMotorBrake(boolean brake) {
     swerve.setMotorIdleMode(brake);
+  }
+
+  public Rotation2d getGyroRot() {
+    return swerve.getRoll();
   }
 
   public void zeroGyro() {

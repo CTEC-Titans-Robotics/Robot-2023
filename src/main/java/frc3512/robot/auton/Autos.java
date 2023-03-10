@@ -3,6 +3,9 @@ package frc3512.robot.auton;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,13 +38,10 @@ public final class Autos {
             true,
             swerve);
 
-    autonChooser = new SendableChooser<Command>();
+    autonChooser = new SendableChooser<>();
     autonChooser.setDefaultOption("No-op", new InstantCommand());
-    autonChooser.addOption("Score 1, Balance", balanceMidZone());
-    autonChooser.addOption("Score 2 Money Zone", score2MoneyZone());
-    autonChooser.addOption("Score 3 Money Zone", score3MoneyZone());
-    autonChooser.addOption("Score 2 Far Zone", score2FarZone());
-    autonChooser.addOption("Score 3 Far Zone", score3FarZone());
+    autonChooser.addOption("Bottom Lane Main", bottomLaneMain());
+    autonChooser.addOption("Bottom Lane Secondary", bottomLaneSecondary());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);
   }
@@ -50,28 +50,31 @@ public final class Autos {
     return autonChooser.getSelected();
   }
 
-  public Command balanceMidZone() {
+  public Command bottomLaneMain() {
     return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Balance Mid Zone", Constants.AutonConstants.constraints));
+        PathPlanner.loadPath("Bottom Lane Main", Constants.AutonConstants.constraints));
   }
 
-  public Command score2MoneyZone() {
-    return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Score 2 Money Zone", Constants.AutonConstants.constraints));
+  public Command levelOut() {
+    return new InstantCommand(() -> {
+      while(true) {
+        Rotation2d rot = swerve.getGyroRot();
+        if(rot.getDegrees() <= 0.4 || rot.getDegrees() >= -0.4) {
+          break;
+        }
+        double dir;
+        if(rot.getDegrees() > 0.4) {
+          dir = -0.0254;
+        } else {
+          dir = 0.0254;
+        }
+        swerve.drive(new Translation2d(0, dir), 0, true, false);
+      }
+    });
   }
 
-  public Command score3MoneyZone() {
+  public Command bottomLaneSecondary() {
     return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Score 3 Money Zone", Constants.AutonConstants.constraints));
-  }
-
-  public Command score2FarZone() {
-    return autonBuilder.fullAuto(
-        PathPlanner.loadPathGroup("Score 2 Far Zone", Constants.AutonConstants.constraints));
-  }
-
-  public Command score3FarZone() {
-    return autonBuilder.fullAuto(
-        PathPlanner.loadPathGroup("Score 3 Far Zone", Constants.AutonConstants.constraints));
+            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints)).andThen(levelOut());
   }
 }

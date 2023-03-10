@@ -3,7 +3,9 @@ package frc3512.robot;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,6 +22,7 @@ import frc3512.robot.subsystems.ArmNew;
 //import frc3512.robot.subsystems.ArmNewSub;
 //import frc3512.robot.subsystems.ArmV3;
 //import frc3512.robot.subsystems.ArmV3;
+import frc3512.robot.auton.Autos;
 //import frc3512.robot.subsystems.ArmNew;
 import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
@@ -35,6 +38,7 @@ public class Robot2023 {
   private ArmNew m_arm = new ArmNew();
   //private ArmNew m_arm = new ArmNew();
   public Claw claw = new Claw();
+  public Autos autos = new Autos(swerve);
   //public ArmExtension extension = new ArmExtension();
 
   // Driver Control
@@ -144,4 +148,11 @@ public class Robot2023 {
    *
    * @return the command to run in autonomous
    */
+  public Command getAutonomousCommand() {
+    return autos.getSelected();
+  }
+
+  public void testPeriodic() {
+    SmartDashboard.putNumber("Gyro Roll", swerve.getGyroRot().getDegrees());
+  }
 }
