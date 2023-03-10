@@ -58,7 +58,7 @@ public final class Constants {
     // Joystick axis deadband for the swerve drive
     public static final double swerveDeadband = 0.1;
 
-    public static final double voltageComp = 12.0;
+    public static final double voltageComp = 12.5;
 
     // Hold time on motor brakes when disabled
     public static final double wheelLockTime = 10;
@@ -134,5 +134,49 @@ public final class Constants {
 
     public static final double xyControllerP = 1.5;
     public static final double thetaControllerP = 1.5;
+  }
+
+  public static class IDs {
+    // pneumatic hub
+    public static final int PNEUMATIC_CAN_ID = 20;
+    // claw solenoid ports
+    public static final int CLAW_OPEN_PORT = 0;
+    public static final int CLAW_CLOSE_PORT = 1;
+
+    // arm extension motor controller id
+    public static final int EXTENSION_CAN_ID = 4;
+    public static final int EXTENSION_ENC_ID = 0;
+
+    // TODO: correct
+    // power distribution hub
+    public static final int PDH_CAN_ID = 42;
+
+    // arm
+    public static final int kArmMainCANID = 14;
+    public static final int kArmFollowerCANID = 15;
+    public static final int kArmCancoderCANID = 7;
+  }
+
+  public static class Arm {
+    // 2,5 deg error position
+    // 5 deg/s velocity error
+    // 6v max output
+    public static final double MIN_POS = 5;
+    public static final double MAX_POS = 95;
+
+    public static final double ZEROING_CUR = 0.2;
+
+    public static final double kP = 0.057085;
+    public static final double kI = 0;
+    public static final double kD = .016142;
+    public static final double kDt = 0.02;
+    public static final double kMaxVelocity = 1;
+    public static final double kMaxAcceleration = 2;
+    public static final double kPosTolerance = 2.5;
+    public static final double kS = 0.085209;
+    public static final double kV = 0.084005;
+    public static final double kA = 0.0012921;
+    public static final double kG = 0.14647;
+    public static final double kDegreesPerRotation = 360;
   }
 }
