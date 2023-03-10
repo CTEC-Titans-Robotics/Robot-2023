@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc3512.robot.auton.Autos;
 import frc3512.robot.subsystems.Arm;
 import frc3512.robot.subsystems.ArmExtension;
 import frc3512.robot.subsystems.Claw;
@@ -17,6 +18,7 @@ public class Robot2023 {
 
   private Arm arm = new Arm();
   public Claw claw = new Claw();
+  public Autos autos = new Autos(swerve);
   public ArmExtension extension = new ArmExtension();
 
   // Driver Control
@@ -76,4 +78,7 @@ public class Robot2023 {
    *
    * @return the command to run in autonomous
    */
+  public Command getAutonomousCommand() {
+    return autos.getSelected();
+  }
 }

@@ -37,11 +37,8 @@ public final class Autos {
 
     autonChooser = new SendableChooser<Command>();
     autonChooser.setDefaultOption("No-op", new InstantCommand());
-    autonChooser.addOption("Score 1, Balance", balanceMidZone());
-    autonChooser.addOption("Score 2 Money Zone", score2MoneyZone());
-    autonChooser.addOption("Score 3 Money Zone", score3MoneyZone());
-    autonChooser.addOption("Score 2 Far Zone", score2FarZone());
-    autonChooser.addOption("Score 3 Far Zone", score3FarZone());
+    autonChooser.addOption("Bottom Lane Main", bottomLaneMain());
+    autonChooser.addOption("Bottom Lane Secondary", bottomLaneSecondary());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);
   }
@@ -50,28 +47,13 @@ public final class Autos {
     return autonChooser.getSelected();
   }
 
-  public Command balanceMidZone() {
+  public Command bottomLaneMain() {
     return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Balance Mid Zone", Constants.AutonConstants.constraints));
+        PathPlanner.loadPath("Bottom Lane Main", Constants.AutonConstants.constraints));
   }
 
-  public Command score2MoneyZone() {
+  public Command bottomLaneSecondary() {
     return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Score 2 Money Zone", Constants.AutonConstants.constraints));
-  }
-
-  public Command score3MoneyZone() {
-    return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Score 3 Money Zone", Constants.AutonConstants.constraints));
-  }
-
-  public Command score2FarZone() {
-    return autonBuilder.fullAuto(
-        PathPlanner.loadPathGroup("Score 2 Far Zone", Constants.AutonConstants.constraints));
-  }
-
-  public Command score3FarZone() {
-    return autonBuilder.fullAuto(
-        PathPlanner.loadPathGroup("Score 3 Far Zone", Constants.AutonConstants.constraints));
+            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints));
   }
 }
