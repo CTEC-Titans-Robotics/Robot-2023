@@ -32,8 +32,8 @@ public class Robot2023 {
   // Robot subsystems
   private Swerve swerve = new Swerve();
 
-  //private ArmOld m_armo = new ArmOld();
-  private ArmNew m_arm = new ArmNew();
+   private ArmOld m_armo = new ArmOld();
+  // private ArmNew m_arm = new ArmNew();
 
   public Claw claw = new Claw();
   public Autos autos = new Autos(swerve);
@@ -77,20 +77,20 @@ public class Robot2023 {
     m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
 
-    m_appendageController
-      .a()
-      .debounce(0.1, Debouncer.DebounceType.kBoth)
-      .onTrue(m_arm.setLowCommand());
+    // m_appendageController
+    //   .a()
+    //   .debounce(0.1, Debouncer.DebounceType.kBoth)
+    //   .onTrue(m_arm.setLowCommand());
       
-    m_appendageController
-    .x()
-    .debounce(0.1, Debouncer.DebounceType.kBoth)
-    .onTrue(m_arm.setMidCommand());
+    // m_appendageController
+    // .x()
+    // .debounce(0.1, Debouncer.DebounceType.kBoth)
+    // .onTrue(m_arm.setMidCommand());
 
-    m_appendageController
-      .y()
-      .debounce(0.1, Debouncer.DebounceType.kBoth)
-      .onTrue(m_arm.setHighCommand());
+    // m_appendageController
+    //   .y()
+    //   .debounce(0.1, Debouncer.DebounceType.kBoth)
+    //   .onTrue(m_arm.setHighCommand());
   }
     
 
@@ -115,13 +115,13 @@ public class Robot2023 {
     }
     //SmartDashboard.putNumber("Gearbox Throughbore", m_arm.m_rotationEncoder.get());
 
-    // if(m_appendageController.getLeftY() > 0.05) {
-    //   m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
-    // } else if(m_appendageController.getLeftY() < -0.05) {
-    //   m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
-    // } else {
-    //   m_armo.stopMovement();
-    // }
+    if(m_appendageController.getLeftY() > 0.05) {
+      m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
+    } else if(m_appendageController.getLeftY() < -0.05) {
+      m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
+    } else {
+      m_armo.stopMovement();
+    }
   }
 
   /* Used for joystick/xbox axis actions. */
@@ -135,7 +135,7 @@ public class Robot2023 {
 
   public void armTest() {
     extension.zeroingProtocol();
-    m_arm.zeroingProtocol();
+    //m_arm.zeroingProtocol();
   }
   public void armPrint (){
     // SmartDashboard.putNumber("Gearbox Throughbore", m_arm.getDistance());
