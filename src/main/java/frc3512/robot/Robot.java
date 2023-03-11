@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
+
+import frc3512.robot.auton.BalanceChassisCommand;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -134,7 +136,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    m_robot.armTest();
     
     try {
       new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
@@ -144,8 +145,12 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during test mode. */
+  BalanceChassisCommand comm = new BalanceChassisCommand(m_robot.swerve);
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robot.testPeriodic();
+    m_robot.balanceTest(comm);
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
