@@ -67,10 +67,10 @@ public class Robot2023 {
     .leftTrigger()
     .debounce(0.1, Debouncer.DebounceType.kRising)
     .onFalse(new InstantCommand(swerve::hareMode));
-    m_driverController
-    .x()
-    .debounce(0.1, Debouncer.DebounceType.kBoth)
-    .onTrue(new InstantCommand(swerve::lock));
+    // m_driverController
+    // .x()
+    // .debounce(0.1, Debouncer.DebounceType.kBoth)
+    // .onTrue(new InstantCommand(swerve::lock));
 
     m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
