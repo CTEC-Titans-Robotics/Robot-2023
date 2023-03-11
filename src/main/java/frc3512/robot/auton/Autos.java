@@ -84,6 +84,6 @@ public final class Autos {
 
   public Command bottomLaneSecondary() {
     return autonBuilder.fullAuto(
-            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints)).andThen(levelOut());
+            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
   }
 }
