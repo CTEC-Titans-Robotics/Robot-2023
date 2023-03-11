@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc3512.robot.Constants;
 import frc3512.robot.subsystems.Swerve;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public final class Autos {
     this.swerve = swerve;
 
     eventMap = new HashMap<>();
+    setMarkers();
 
     autonBuilder =
         new SwerveAutoBuilder(
@@ -47,6 +49,12 @@ public final class Autos {
     SmartDashboard.putData("Auton Chooser", autonChooser);
   }
 
+  private void setMarkers() {
+    eventMap.put("Wait 1 second", new WaitCommand(1));
+    // EventMap.put("Kick it!", )
+    eventMap.put("lock drivetrain", new InstantCommand(() -> swerve.lock()));
+    eventMap.put("halt drivetrain", new InstantCommand(() -> swerve.halt()));
+  }
   public Command getSelected() {
     return autonChooser.getSelected();
   }

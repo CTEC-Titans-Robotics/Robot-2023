@@ -111,7 +111,7 @@ public class SwerveModule {
    * @param desiredState Desired swerve module state.
    * @param isOpenLoop Whether to use open loop (direct percent) or direct velocity control.
    */
-  public void setDesiredState(SwerveModuleState2 desiredState, boolean isOpenLoop) {
+  public void setDesiredState(SwerveModuleState2 desiredState, boolean isOpenLoop, boolean force) {
     SwerveModuleState simpleState =
         new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
     simpleState = SwerveModuleState.optimize(simpleState, getState().angle);
@@ -133,14 +133,21 @@ public class SwerveModule {
       double velocity = desiredState.speedMetersPerSecond;
       driveMotor.setReference(velocity, feedforward.calculate(velocity));
     }
-
+    double angle = desiredState.angle.getDegrees();
+    if (force)
+    {
+      angleMotor.setReference(angle, Math.toDegrees(desiredState.omegaRadPerSecond) * configuration.angleKV);
+    }
+    else {
     // Prevents module rotation if speed is less than 1%
-    double angle =
+    angle =
         (Math.abs(desiredState.speedMetersPerSecond) <= (configuration.maxSpeed * 0.01)
             ? lastAngle
             : desiredState.angle.getDegrees());
     angleMotor.setReference(
         angle, Math.toDegrees(desiredState.omegaRadPerSecond) * configuration.angleKV);
+    
+    }
     lastAngle = angle;
 
     if (RobotBase.isSimulation()) {

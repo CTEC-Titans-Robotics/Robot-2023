@@ -131,12 +131,19 @@ private void armConfigAngleEncoder() {
         SmartDashboard.putNumber("Arm Angle", armAngle);
     }
     
+    public void kick() {
+        leaderMotor.set(.3);
+    }
+
+    public void halt() {
+        leaderMotor.set(0);
+    }
     public void periodic() {
-        initDashboard();
+        // initDashboard();
         double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
-        SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber("Arm Angle", armAngle);
-        SmartDashboard.putBoolean("reachedMax", reachedMax);
+        // SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
+        // SmartDashboard.putNumber("Arm Angle", armAngle);
+        // SmartDashboard.putBoolean("reachedMax", reachedMax);
 
         if (armAngle > maxPos) {
             reachedMax = true;

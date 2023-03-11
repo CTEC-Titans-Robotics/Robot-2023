@@ -138,8 +138,8 @@ public final class Constants {
     public static final PathConstraints constraints =
         new PathConstraints(AutonConstants.maxVelocity, AutonConstants.maxAcceleration);
 
-    public static final double xyControllerP = 1.5;
-    public static final double thetaControllerP = 1.5;
+    public static final double xyControllerP = 3;
+    public static final double thetaControllerP = 2.5;
   }
 
   public static class IDs {
