@@ -92,7 +92,7 @@ public class ArmNewSub extends ProfiledPIDSubsystem {
   }
 
   public void zeroingProtocol() {
-     SmartDashboard.putBoolean("zeroing init", true);
+    // SmartDashboard.putBoolean("zeroing init", true);
     m_limitSwitch.enableLimitSwitch(false);
     while (!m_limitSwitch.isPressed()) {
       m_mainController.set(-.1);
@@ -115,7 +115,7 @@ public class ArmNewSub extends ProfiledPIDSubsystem {
     double test = output;
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
 
-    SmartDashboard.putNumber("PID VOLTAGE", test);
+    // SmartDashboard.putNumber("PID VOLTAGE", test);
     // SmartDashboard.putNumber("FEEDFOWARD VOLTAGE", feedforward);
     if ((test <= 1 && test >= -1)) test = 0;
     if (test >= 8) test = 8;

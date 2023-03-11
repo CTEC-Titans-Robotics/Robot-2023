@@ -1,7 +1,5 @@
 package frc3512.robot;
 
-import com.revrobotics.ControlType;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
@@ -76,6 +74,7 @@ public class Robot2023 {
 
     m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
+    m_appendageController.a().onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
 
     // m_appendageController
     //   .a()
