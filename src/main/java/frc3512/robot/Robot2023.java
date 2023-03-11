@@ -140,11 +140,8 @@ public class Robot2023 {
     //m_arm.zeroingProtocol();
   }
 
-  public void balanceTest(BalanceChassisCommand comm) {
-    if(comm.isFinished()) {
-      swerve.drive(new Translation2d(0, 0), 0, true, false);
-    }
-    comm.execute();
+  public void balanceTest() {
+    new BalanceChassisCommand(swerve).execute();
   }
 
   public void armPrint (){

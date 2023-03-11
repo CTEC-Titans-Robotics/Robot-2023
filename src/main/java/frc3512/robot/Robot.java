@@ -145,11 +145,10 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during test mode. */
-  BalanceChassisCommand comm = new BalanceChassisCommand(m_robot.swerve);
   @Override
   public void testPeriodic() {
     m_robot.testPeriodic();
-    m_robot.balanceTest(comm);
+    m_robot.balanceTest();
   }
 
   /** This function is called once when the robot is first started up. */

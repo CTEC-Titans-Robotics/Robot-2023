@@ -42,9 +42,12 @@ public final class Autos {
             swerve);
 
     autonChooser = new SendableChooser<>();
-    autonChooser.addOption("No-op", new InstantCommand());
-    autonChooser.addOption("Bottom Lane Main", bottomLaneMain());
-    autonChooser.setDefaultOption("Bottom Lane Secondary", bottomLaneSecondary());
+    autonChooser.setDefaultOption("No-op", new InstantCommand());
+    autonChooser.addOption("Left Side Platform", leftSidePlatform());
+    autonChooser.addOption("Left Side Community", leftSideCommunity());
+    autonChooser.addOption("Right Side Platform", rightSidePlatform());
+    autonChooser.addOption("Right Side Community", rightSideCommunity());
+    autonChooser.addOption("Center Platform", centerPlatform());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);
   }
@@ -59,9 +62,9 @@ public final class Autos {
     return autonChooser.getSelected();
   }
 
-  public Command bottomLaneMain() {
+  public Command leftSidePlatform() {
     return autonBuilder.fullAuto(
-        PathPlanner.loadPath("Bottom Lane Main", Constants.AutonConstants.constraints));
+        PathPlanner.loadPath("Left Side Platform", Constants.AutonConstants.constraints));
   }
 
   public Command levelOut() {
@@ -82,8 +85,23 @@ public final class Autos {
     });
   }
 
-  public Command bottomLaneSecondary() {
+  public Command leftSideCommunity() {
     return autonBuilder.fullAuto(
-            PathPlanner.loadPath("Bottom Lane Secondary", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
+            PathPlanner.loadPath("Left Side Community", Constants.AutonConstants.constraints));
+  }
+
+  public Command rightSidePlatform() {
+    return autonBuilder.fullAuto(
+            PathPlanner.loadPath("Right Side Platform", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
+  }
+
+  public Command rightSideCommunity() {
+    return autonBuilder.fullAuto(
+            PathPlanner.loadPath("Right Side Community", Constants.AutonConstants.constraints));
+  }
+
+  public Command centerPlatform() {
+    return autonBuilder.fullAuto(
+            PathPlanner.loadPath("Center Platforms", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
   }
 }
