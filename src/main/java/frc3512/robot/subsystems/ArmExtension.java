@@ -1,95 +1,105 @@
-// package frc3512.robot.subsystems;
+package frc3512.robot.subsystems;
 
-// import com.revrobotics.CANSparkMax;
-// import com.revrobotics.CANSparkMax.IdleMode;
-// import com.revrobotics.CANSparkMaxLowLevel;
-// import edu.wpi.first.wpilibj.DigitalInput;
-// import edu.wpi.first.wpilibj.DutyCycleEncoder;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.wpilibj2.command.Command;
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.SparkMaxAlternateEncoder.Type;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 
-// import java.util.function.BooleanSupplier;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-// public class ArmExtension extends SubsystemBase {
-//     public static final CANSparkMax extension = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-//     public static DutyCycleEncoder relavitveEncoder = new DutyCycleEncoder(new DigitalInput(0));
+import java.util.function.BooleanSupplier;
 
-//     public static double sampleValues[]; 
-//     public static double zeroingCurrent = 10;
-//     public static boolean isZeroed;
-//     public static double rotationCounter;
-//     public double extDistance;
-//     public double maxPos = 4.8;
-//     public double minPos = -0.03;
-//     public boolean reachedMax;
-//     public boolean reachedMin;
-//     public BooleanSupplier reachedMaxSup = () -> reachedMax;
-//     public BooleanSupplier reachedMinSup = () -> reachedMin;
+public class ArmExtension extends SubsystemBase {
+    public static final CANSparkMax extension = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
+    public static final RelativeEncoder relavitveEncoder = extension.getAlternateEncoder(Type.kQuadrature, 2048*4);
+    //public static final Encoder relavitveEncoder = new Encoder(8, 9);
+
+    public static double sampleValues[]; 
+    public static double zeroingCurrent = 10;
+    public static boolean isZeroed;
+    public static double rotationCounter;
+    public double extDistance;
+    public double maxPos = 5; //4.8
+    public double minPos = 0.0; // 0.1
+    public boolean reachedMax;
+    public boolean reachedMin;
+    public BooleanSupplier reachedMaxSup = () -> reachedMax;
+    public BooleanSupplier reachedMinSup = () -> reachedMin;
 
 
 
-//     public ArmExtension() {
-//         isZeroed = false; 
-//         relavitveEncoder.reset();
+    public ArmExtension() {
+        isZeroed = false; 
+        relavitveEncoder.setPosition(0);
+        relavitveEncoder.setInverted(true);
 
-//         extension.setIdleMode(IdleMode.kBrake);
-//     }
-//     public void periodic(){
-//         SmartDashboard.putNumber("relativeEncoder", relavitveEncoder.get());
-//         SmartDashboard.putNumber("Output in Amps", extension.getOutputCurrent());
-//         SmartDashboard.putBoolean("Zeroed", isZeroed);
-//         SmartDashboard.putNumber("minPosExt", extDistance);
-//         extDistance = relavitveEncoder.get();
+
+        extension.setIdleMode(IdleMode.kBrake);
+    }
+    public void periodic(){
+        SmartDashboard.putNumber("relativeEncoder", relavitveEncoder.getPosition());
+        SmartDashboard.putNumber("Output in Amps", extension.getOutputCurrent());
+        SmartDashboard.putBoolean("Zeroed", isZeroed);
+        SmartDashboard.putNumber("minPosExt", extDistance);
+        extDistance = relavitveEncoder.getPosition();
         
-//         if (extDistance > maxPos) {
-//             reachedMax = true;
-//         } else {
-//             reachedMax = false;
-//         }
+        if (extDistance > maxPos) {
+            reachedMax = true;
+        } else {
+            reachedMax = false;
+        }
 
-//         if (extDistance < minPos) {
-//             reachedMin = true;
-//         } else {
-//             reachedMin = false;
-//         }
+        if (extDistance < minPos) {
+            reachedMin = true;
+        } else {
+            reachedMin = false;
+        }
 
-//         SmartDashboard.putBoolean("reachedMinExt", reachedMin);
-//         SmartDashboard.putBoolean("reachedMaxExt", reachedMax);
-//     }
+        SmartDashboard.putBoolean("reachedMinExt", reachedMin);
+        SmartDashboard.putBoolean("reachedMaxExt", reachedMax);
+    }
 
-//     public void zeroingProtocall() {
-//         extension.set(-.05);
-//         //double startingValue = extension.getOutputCurrent(); 
-//         while (true){
-//             if(extension.getOutputCurrent() > .2) {
-//                 relavitveEncoder.reset();
-//                 isZeroed = true;
-//                 extension.stopMotor();
-//                 break;
-//         }
-//     }
-//     }
-//     public void positiveMovement(BooleanSupplier max){
-//         if(!max.getAsBoolean()) {
-//             extension.set(0.4);
-//         } else {
-//             stopMovement();
-//         }
-//     }
-//     public void negativeMovement(BooleanSupplier min){
-//         if(!min.getAsBoolean()) {
-//             extension.set(-0.4);
-//         } else {
-//             stopMovement();
-//         }
-//     }
+    public void zeroingProtocol() {
+            int loop_counter = 0;
+            double current_sum = 0;
+            extension.set(-.05);
+            current_sum += extension.getOutputCurrent();
+            while (true) {
+              if (extension.getOutputCurrent() > 3 * (current_sum / ++loop_counter)) {
+                extension.stopMotor();
+                relavitveEncoder.setPosition(0);
+                break;
+              }
+              current_sum += extension.getOutputCurrent();
+            }
+          }
+    public void positiveMovement(BooleanSupplier max){
+        if(!max.getAsBoolean()) {
+            extension.set(0.1);
+        } else {
+            stopMovement();
+        }
+    }
+    public void negativeMovement(BooleanSupplier min){
+        if(!min.getAsBoolean()) {
+            extension.set(-0.1);
+        } else {
+            stopMovement();
+        }
+    }
 
-//     public void stopMovement() {
-//         extension.set(0.01);
-//     }
+    public void stopMovement() {
+        extension.set(0.01);
+    }
 
-//     public Command stopMovementCommand() {
-//         return run(() -> extension.set(-0.01));
-//     }
-// }
+    public Command stopMovementCommand() {
+        return run(() -> extension.set(-0.01));
+    }
+}

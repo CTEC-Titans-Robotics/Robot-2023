@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robot.setMotorBrake(true);
+    m_robot.armTest();
     m_autonomousCommand = m_robot.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -106,16 +107,17 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
     m_robot.setMotorBrake(true);
+    m_robot.armTest();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    m_robot.armTest();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

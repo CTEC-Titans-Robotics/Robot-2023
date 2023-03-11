@@ -57,6 +57,8 @@ public class ArmNew extends SubsystemBase {
    private final TrapezoidProfile.State High = new State(ArmConstants.highGoalPosition, 0);
    private final TrapezoidProfile.State Mid = new State(ArmConstants.midGoalPosition, 0);
    private final TrapezoidProfile.State Low = new State(ArmConstants.lowGoalPosition, 0);
+   private final TrapezoidProfile.State Retracted = new State(10, 0);  
+
 
   public ArmNew() {
     //m_rotationEncoder.setDistancePerPulse(1/2048);
@@ -131,6 +133,9 @@ public class ArmNew extends SubsystemBase {
   }
   public void setLow() {
     useOutput(Low);
+  }
+  public void setRetract(){
+    useOutput(Retracted);
   }
 
   public Command setLowCommand(){

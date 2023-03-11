@@ -15,15 +15,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.Constants.Arm;
 import edu.wpi.first.wpilibj.XboxController;
-//import frc3512.robot.subsystems.ArmOld;
+import frc3512.robot.subsystems.ArmOld;
 // import frc3512.robot.subsystems.Arm;
-//import frc3512.robot.subsystems.ArmExtension;
+import frc3512.robot.subsystems.ArmExtension;
 import frc3512.robot.subsystems.ArmNew;
 //import frc3512.robot.subsystems.ArmNewSub;
-//import frc3512.robot.subsystems.ArmV3;
-//import frc3512.robot.subsystems.ArmV3;
 import frc3512.robot.auton.Autos;
-//import frc3512.robot.subsystems.ArmNew;
+import frc3512.robot.subsystems.ArmNew;
 import frc3512.robot.subsystems.Claw;
 import frc3512.robot.subsystems.Swerve;
 
@@ -36,10 +34,10 @@ public class Robot2023 {
 
   //private ArmOld m_armo = new ArmOld();
   private ArmNew m_arm = new ArmNew();
-  //private ArmNew m_arm = new ArmNew();
+
   public Claw claw = new Claw();
   public Autos autos = new Autos(swerve);
-  //public ArmExtension extension = new ArmExtension();
+  public ArmExtension extension = new ArmExtension();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -51,7 +49,7 @@ public class Robot2023 {
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
   private final CommandXboxController m_appendageController =
       new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
-  private static XboxController appendageXbox = new XboxController(1); 
+  
 
   public void setMotorBrake(boolean brake) {
     swerve.setMotorBrake(brake);
@@ -108,21 +106,21 @@ public class Robot2023 {
     // if(appendageXbox.getYButton()) {
     //   m_arm.setHigh();
     // }
-    // if(m_appendageController.getRightY() > 0.05) {
-    //   extension.negativeMovement(extension.reachedMinSup);
-    // } else if(m_appendageController.getRightY() < -0.05) {
-    //   extension.positiveMovement(extension.reachedMaxSup);
-    // } else {
-    //   extension.stopMovement();
-    // }
+    if(m_appendageController.getRightY() > 0.05) {
+      extension.negativeMovement(extension.reachedMinSup);
+    } else if(m_appendageController.getRightY() < -0.05) {
+      extension.positiveMovement(extension.reachedMaxSup);
+    } else {
+      extension.stopMovement();
+    }
     //SmartDashboard.putNumber("Gearbox Throughbore", m_arm.m_rotationEncoder.get());
 
-    // if(appendage.getLeftY() > 0.05) {
-    //   arm.simpleArmNegativeMovement(arm.reachedMinSup);
-    // } else if(appendage.getLeftY() < -0.05) {
-    //   arm.simpleArmPositiveMovement(arm.reachedMaxSup);
+    // if(m_appendageController.getLeftY() > 0.05) {
+    //   m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
+    // } else if(m_appendageController.getLeftY() < -0.05) {
+    //   m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
     // } else {
-    //   arm.stopMovement();
+    //   m_armo.stopMovement();
     // }
   }
 
@@ -136,11 +134,12 @@ public class Robot2023 {
   }
 
   public void armTest() {
+    extension.zeroingProtocol();
     m_arm.zeroingProtocol();
   }
   public void armPrint (){
-    SmartDashboard.putNumber("Gearbox Throughbore", m_arm.getDistance());
-    m_arm.setLow();
+    // SmartDashboard.putNumber("Gearbox Throughbore", m_arm.getDistance());
+    // m_arm.setLow();
   }
 
   /**

@@ -22,6 +22,7 @@ public final class Autos {
   private final HashMap<String, Command> eventMap;
   private final SwerveAutoBuilder autonBuilder;
 
+
   public Autos(Swerve swerve) {
     this.swerve = swerve;
 
@@ -39,9 +40,9 @@ public final class Autos {
             swerve);
 
     autonChooser = new SendableChooser<>();
-    autonChooser.setDefaultOption("No-op", new InstantCommand());
+    autonChooser.addOption("No-op", new InstantCommand());
     autonChooser.addOption("Bottom Lane Main", bottomLaneMain());
-    autonChooser.addOption("Bottom Lane Secondary", bottomLaneSecondary());
+    autonChooser.setDefaultOption("Bottom Lane Secondary", bottomLaneSecondary());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);
   }

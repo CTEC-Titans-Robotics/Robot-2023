@@ -116,9 +116,9 @@ public final class Constants {
     public static final double maxVelocityRadPerSecond = 3;
     public static final double maxAccelerationRadPerSecSquared = 10;
 
-    public static final double highGoalPosition = 95 - offset;
-    public static final double midGoalPosition =  70 - offset;
-    public static final double lowGoalPosition = 45 - offset;
+    public static final double highGoalPosition = 110 - offset;
+    public static final double midGoalPosition =  100 - offset;
+    public static final double lowGoalPosition = 30 - offset;
  
   }
 
