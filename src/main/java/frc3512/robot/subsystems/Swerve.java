@@ -111,6 +111,7 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     swerve.updateOdometry();
+    // this should compensate for course deviations in heading in autonomous with pid tuning
   }
 
   public void tortoiseMode() {
@@ -121,5 +122,9 @@ public class Swerve extends SubsystemBase {
   public void hareMode() {
     swerve.swerveController.config.maxSpeed = m_hareSpeed;
     swerve.swerveController.config.maxAngularVelocity = m_hareAngularVelocity;
+  }
+
+  public void halt() {
+    swerve.setChassisSpeeds(new ChassisSpeeds());
   }
 }
