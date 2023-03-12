@@ -72,8 +72,8 @@ public class Robot2023 {
     // .debounce(0.1, Debouncer.DebounceType.kBoth)
     // .onTrue(new InstantCommand(swerve::lock));
 
-    m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
-    m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
+    m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.closeClaw()));
+    m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.a().onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
 
     // m_appendageController
