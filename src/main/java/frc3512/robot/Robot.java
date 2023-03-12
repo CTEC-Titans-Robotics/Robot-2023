@@ -5,6 +5,7 @@
 package frc3512.robot;
 
 import com.revrobotics.REVPhysicsSim;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -49,6 +50,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Disable joystick warnings
     DriverStation.silenceJoystickConnectionWarning(true);
+    CameraServer.startAutomaticCapture();
 
     m_robot.configureButtonBindings();
     m_robot.configureAxisActions();
@@ -96,7 +98,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robot.setMotorBrake(true);
-    m_robot.armTest();
+
+    // No arm?! :waaaa:
+    // m_robot.armTest();
+
     m_autonomousCommand = m_robot.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -113,7 +118,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_robot.setMotorBrake(true);
-    m_robot.armTest();
+
+    // No arm?! :waaaa:
+    // m_robot.armTest();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

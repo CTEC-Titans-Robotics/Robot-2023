@@ -72,9 +72,10 @@ public class Robot2023 {
     // .debounce(0.1, Debouncer.DebounceType.kBoth)
     // .onTrue(new InstantCommand(swerve::lock));
 
-    m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
-    m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
-    m_appendageController.a().onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
+    // No arm?! :waaaa:
+    // m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
+    // m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
+    // m_appendageController.a().onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
 
     // m_appendageController
     //   .a()
@@ -105,22 +106,25 @@ public class Robot2023 {
     // if(appendageXbox.getYButton()) {
     //   m_arm.setHigh();
     // }
-    if(m_appendageController.getRightY() > 0.05) {
-      extension.negativeMovement(extension.reachedMinSup);
-    } else if(m_appendageController.getRightY() < -0.05) {
-      extension.positiveMovement(extension.reachedMaxSup);
-    } else {
-      extension.stopMovement();
-    }
+
+    // No arm?! :waaaa:
+    // if(m_appendageController.getRightY() > 0.05) {
+    //   extension.negativeMovement(extension.reachedMinSup);
+    // } else if(m_appendageController.getRightY() < -0.05) {
+    //   extension.positiveMovement(extension.reachedMaxSup);
+    // } else {
+    //   extension.stopMovement();
+    // }
     //SmartDashboard.putNumber("Gearbox Throughbore", m_arm.m_rotationEncoder.get());
 
-    if(m_appendageController.getLeftY() > 0.05) {
-      m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
-    } else if(m_appendageController.getLeftY() < -0.05) {
-      m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
-    } else {
-      m_armo.stopMovement();
-    }
+    // No arm?! :waaaa:
+    // if(m_appendageController.getLeftY() > 0.05) {
+    //   m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
+    // } else if(m_appendageController.getLeftY() < -0.05) {
+    //   m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
+    // } else {
+    //   m_armo.stopMovement();
+    // }
   }
 
   /* Used for joystick/xbox axis actions. */
