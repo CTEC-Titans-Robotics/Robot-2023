@@ -52,7 +52,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Disable joystick warnings
     DriverStation.silenceJoystickConnectionWarning(true);
-    CameraServer.startAutomaticCapture();
 
     m_robot.configureButtonBindings();
     m_robot.configureAxisActions();
@@ -122,7 +121,7 @@ public class Robot extends TimedRobot {
     m_robot.setMotorBrake(true);
 
     // No arm?! :waaaa:
-    // m_robot.armTest();
+    m_robot.armTest();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
