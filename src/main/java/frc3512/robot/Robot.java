@@ -144,6 +144,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    m_robot.balanceTest();
     
     try {
       new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
@@ -156,7 +157,6 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     m_robot.testPeriodic();
-    m_robot.balanceTest();
   }
 
   /** This function is called once when the robot is first started up. */

@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc3512.robot.Robot;
 import frc3512.robot.subsystems.Swerve;
 
 public class BalanceChassisCommand extends CommandBase {
@@ -22,14 +23,16 @@ public class BalanceChassisCommand extends CommandBase {
 
 	@Override
 	public void execute() {
-		if(isFinished()) {
-			swerve.drive(new Translation2d(0, 0), 0, true, false);
-			return;
-		}
-		double vxMeters = MathUtil.clamp(this.pid.calculate(this.swerve.getGyroRot().getDegrees()),
-				-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
+		while (!isFinished()) {
+			double vxMeters = MathUtil.clamp(this.pid.calculate(this.swerve.getGyroRot().getDegrees()),
+					-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
 
-		this.swerve.drive(new Translation2d(-vxMeters, 0), 0, true, false);
+			this.swerve.drive(new Translation2d(-vxMeters, 0), 0, true, false);
+		}
+		swerve.drive(new Translation2d(0, 0), 0, true, false);
+		while(Robot.getInstance().isAutonomous()) {
+			if(!isFinished()) this.execute();
+		}
 	}
 
 	@Override
