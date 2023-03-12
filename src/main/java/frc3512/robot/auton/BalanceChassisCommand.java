@@ -23,16 +23,10 @@ public class BalanceChassisCommand extends CommandBase {
 
 	@Override
 	public void execute() {
-		while (!isFinished()) {
-			double vxMeters = MathUtil.clamp(this.pid.calculate(this.swerve.getGyroRot().getDegrees()),
-					-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
+		double vxMeters = MathUtil.clamp(this.pid.calculate(this.swerve.getGyroRot().getDegrees()),
+				-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
 
-			this.swerve.drive(new Translation2d(-vxMeters, 0), 0, true, false);
-		}
-		swerve.drive(new Translation2d(0, 0), 0, true, false);
-		while(Robot.getInstance().isAutonomous()) {
-			if(!isFinished()) this.execute();
-		}
+		this.swerve.drive(new Translation2d(-vxMeters, 0), 0, true, false);
 	}
 
 	@Override

@@ -68,21 +68,23 @@ public final class Autos {
   }
 
   public Command levelOut() {
-    return new InstantCommand(() -> {
-      while(true) {
-        Rotation2d rot = swerve.getGyroRot();
-        if(rot.getDegrees() <= 0.4 || rot.getDegrees() >= -0.4) {
-          break;
-        }
-        double dir;
-        if(rot.getDegrees() > 0.4) {
-          dir = -0.0254;
-        } else {
-          dir = 0.0254;
-        }
-        swerve.drive(new Translation2d(0, dir), 0, true, false);
-      }
-    });
+    // return new InstantCommand(() -> {
+    //   while(true) {
+    //     Rotation2d rot = swerve.getGyroRot();
+    //     if(rot.getDegrees() <= 0.4 || rot.getDegrees() >= -0.4) {
+    //       break;
+    //     }
+    //     double dir;
+    //     if(rot.getDegrees() > 0.4) {
+    //       dir = -0.0254;
+    //     } else {
+    //       dir = 0.0254;
+    //     }
+    //     swerve.drive(new Translation2d(0, dir), 0, true, false);
+    //   }
+    // });
+
+    return new BalanceChassisCommand(swerve);
   }
 
   public Command leftSideCommunity() {
@@ -102,6 +104,6 @@ public final class Autos {
 
   public Command centerPlatform() {
     return autonBuilder.fullAuto(
-            PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
+            PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints));
   }
 }

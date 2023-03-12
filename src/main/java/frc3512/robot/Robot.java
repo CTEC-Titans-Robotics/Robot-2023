@@ -6,6 +6,7 @@ package frc3512.robot;
 
 import com.revrobotics.REVPhysicsSim;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -112,8 +113,20 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during autonomous. */
+  Command levelOut;
   @Override
   public void autonomousPeriodic() {
+    if(m_robot.autos.getSelected().getName().contains("Platform") && m_robot.autos.getSelected().isFinished()) {
+      if(levelOut == null) {
+        levelOut = m_robot.autos.levelOut();
+      } else {
+        if(levelOut.isFinished()) {
+          m_robot.swerve.drive(new Translation2d(0, 0), 0, true, false);
+          return;
+        }
+      }
+      levelOut.execute();
+    }
   }
 
   @Override
