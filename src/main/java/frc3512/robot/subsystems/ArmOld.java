@@ -49,8 +49,7 @@ public class ArmOld extends SubsystemBase {
 
 
     public ArmOld() {
-        
-        SmartDashboard.putBoolean("zeroing init", false);
+        //SmartDashboard.putBoolean("zeroing init", false);
 
         initDashboard();
         followerMotor.follow(leaderMotor);
@@ -106,29 +105,29 @@ private void armConfigAngleEncoder() {
 
     public static void initDashboard() {
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("I Zone", kIz);
-        SmartDashboard.putNumber("Feed Forward", kFF);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
+        // SmartDashboard.putNumber("P Gain", kP);
+        // SmartDashboard.putNumber("I Gain", kI);
+        // SmartDashboard.putNumber("D Gain", kD);
+        // SmartDashboard.putNumber("I Zone", kIz);
+        // SmartDashboard.putNumber("Feed Forward", kFF);
+        // SmartDashboard.putNumber("Max Output", kMaxOutput);
+        // SmartDashboard.putNumber("Min Output", kMinOutput);
 
         // display Smart Motion coefficients
-        SmartDashboard.putNumber("Max Velocity", maxVel);
-        SmartDashboard.putNumber("Min Velocity", minVel);
-        SmartDashboard.putNumber("Max Acceleration", maxAccel);
-        SmartDashboard.putNumber("Set Position", 0);
-        SmartDashboard.putNumber("Set Velocity", 0);
+        // SmartDashboard.putNumber("Max Velocity", maxVel);
+        // SmartDashboard.putNumber("Min Velocity", minVel);
+        // SmartDashboard.putNumber("Max Acceleration", maxAccel);
+        // SmartDashboard.putNumber("Set Position", 0);
+        // SmartDashboard.putNumber("Set Velocity", 0);
 
 
         // button to toggle between velocity and smart motion modes
-        SmartDashboard.putBoolean("Mode", true);
+        //SmartDashboard.putBoolean("Mode", true);
 
         //encoder value
-        double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
-        SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber("Arm Angle", armAngle);
+        //double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
+        //SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
+        //SmartDashboard.putNumber("Arm Angle", armAngle);
     }
     
     public void kick() {
@@ -208,7 +207,7 @@ private void armConfigAngleEncoder() {
      } 
 
     public void zeroingProtocol() {
-         SmartDashboard.putBoolean("zeroing init", true);
+         //SmartDashboard.putBoolean("zeroing init", true);
         limitSwitch.enableLimitSwitch(false);
         while (!limitSwitch.isPressed()) {
             leaderMotor.set(-0.1);
@@ -236,7 +235,7 @@ private void armConfigAngleEncoder() {
     }
 
     public void stopMovement() {
-        leaderMotor.set(-0.01);
+        leaderMotor.set(0.01);
     }
 
     public Command stopMovementCommand() {
