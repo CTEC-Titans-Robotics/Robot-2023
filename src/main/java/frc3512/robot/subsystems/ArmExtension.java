@@ -27,7 +27,7 @@ public class ArmExtension extends SubsystemBase {
     public static double rotationCounter;
     public double extDistance;
     public double maxPos = 5; //4.8
-    public double minPos = 0.0; // 0.1
+    public double minPos = -0.5; // 0.1
     public boolean reachedMax;
     public boolean reachedMin;
     public BooleanSupplier reachedMaxSup = () -> reachedMax;
@@ -44,26 +44,18 @@ public class ArmExtension extends SubsystemBase {
         extension.setIdleMode(IdleMode.kBrake);
     }
     public void periodic(){
-        SmartDashboard.putNumber("relativeEncoder", relavitveEncoder.getPosition());
-        SmartDashboard.putNumber("Output in Amps", extension.getOutputCurrent());
-        SmartDashboard.putBoolean("Zeroed", isZeroed);
-        SmartDashboard.putNumber("minPosExt", extDistance);
+        //SmartDashboard.putNumber("relativeEncoder", relavitveEncoder.getPosition());
+        //SmartDashboard.putNumber("Output in Amps", extension.getOutputCurrent());
+        //SmartDashboard.putBoolean("Zeroed", isZeroed);
+        //SmartDashboard.putNumber("minPosExt", extDistance);
         extDistance = relavitveEncoder.getPosition();
-        
-        if (extDistance > maxPos) {
-            reachedMax = true;
-        } else {
-            reachedMax = false;
-        }
 
-        if (extDistance < minPos) {
-            reachedMin = true;
-        } else {
-            reachedMin = false;
-        }
+        reachedMax = extDistance > maxPos;
 
-        SmartDashboard.putBoolean("reachedMinExt", reachedMin);
-        SmartDashboard.putBoolean("reachedMaxExt", reachedMax);
+        reachedMin = extDistance < minPos;
+
+        // SmartDashboard.putBoolean("reachedMinExt", reachedMin);
+        // SmartDashboard.putBoolean("reachedMaxExt", reachedMax);
     }
 
     public void zeroingProtocol() {
@@ -72,7 +64,7 @@ public class ArmExtension extends SubsystemBase {
             extension.set(-.05);
             current_sum += extension.getOutputCurrent();
             while (true) {
-              if (extension.getOutputCurrent() > 3 * (current_sum / ++loop_counter)) {
+              if (extension.getOutputCurrent() > 1.5) {
                 extension.stopMotor();
                 relavitveEncoder.setPosition(0);
                 break;
@@ -82,21 +74,21 @@ public class ArmExtension extends SubsystemBase {
           }
     public void positiveMovement(BooleanSupplier max){
         if(!max.getAsBoolean()) {
-            extension.set(0.1);
+            extension.set(0.25);
         } else {
             stopMovement();
         }
     }
     public void negativeMovement(BooleanSupplier min){
         if(!min.getAsBoolean()) {
-            extension.set(-0.1);
+            extension.set(-0.25);
         } else {
             stopMovement();
         }
     }
 
     public void stopMovement() {
-        extension.set(0.01);
+        extension.set(0);
     }
 
     public Command stopMovementCommand() {

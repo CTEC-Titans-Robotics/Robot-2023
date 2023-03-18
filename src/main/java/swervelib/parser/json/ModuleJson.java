@@ -1,5 +1,6 @@
 package swervelib.parser.json;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.util.Units;
 import swervelib.encoders.SwerveAbsoluteEncoder;
 import swervelib.motors.SwerveMotor;
@@ -42,7 +43,7 @@ public class ModuleJson {
       double maxSpeed,
       SwerveModulePhysicalCharacteristics physicalCharacteristics) {
     SwerveMotor angleMotor = angle.createMotor(false);
-    SwerveAbsoluteEncoder absEncoder = encoder.createEncoder();
+    SwerveAbsoluteEncoder absEncoder = encoder.createEncoder((CANSparkMax) angleMotor.getMotor());
 
     // If the absolute encoder is attached.
     if (absEncoder == null) {

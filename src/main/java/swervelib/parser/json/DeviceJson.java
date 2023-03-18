@@ -1,6 +1,8 @@
 package swervelib.parser.json;
 
+import com.revrobotics.CANSparkMax;
 import swervelib.encoders.CANCoderSwerve;
+import swervelib.encoders.SparkMaxEncSwerve;
 import swervelib.encoders.SwerveAbsoluteEncoder;
 import swervelib.imu.Pigeon2Swerve;
 import swervelib.imu.SwerveIMU;
@@ -22,12 +24,14 @@ public class DeviceJson {
    *
    * @return {@link SwerveAbsoluteEncoder} given.
    */
-  public SwerveAbsoluteEncoder createEncoder() {
+  public SwerveAbsoluteEncoder createEncoder(CANSparkMax motor) {
     switch (type) {
       case "none":
       case "integrated":
       case "attached":
         return null;
+      case "srx":
+        return new SparkMaxEncSwerve(motor);
       case "thrifty":
       case "throughbore":
       case "dutycycle":

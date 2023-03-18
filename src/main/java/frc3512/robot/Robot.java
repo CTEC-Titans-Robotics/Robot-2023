@@ -5,6 +5,8 @@
 package frc3512.robot;
 
 import com.revrobotics.REVPhysicsSim;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -13,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
+
+import frc3512.robot.auton.BalanceChassisCommand;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -96,7 +100,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robot.setMotorBrake(true);
-    m_robot.armTest();
+
+    // No arm?! :waaaa:
+    // m_robot.armTest();
+
     m_autonomousCommand = m_robot.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -106,14 +113,29 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during autonomous. */
+  Command levelOut;
   @Override
   public void autonomousPeriodic() {
+    if(m_robot.autos.getSelected().getName().contains("Platform") && m_robot.autos.getSelected().isFinished()) {
+      if(levelOut == null) {
+        levelOut = m_robot.autos.levelOut();
+      } else {
+        if(levelOut.isFinished()) {
+          m_robot.swerve.drive(new Translation2d(0, 0), 0, true, false);
+          return;
+        }
+      }
+      levelOut.execute();
+    }
   }
 
   @Override
   public void teleopInit() {
     m_robot.setMotorBrake(true);
+
+    // No arm?! :waaaa:
     m_robot.armTest();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -134,7 +156,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    m_robot.armTest();
+    m_robot.balanceTest();
     
     try {
       new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
@@ -145,7 +167,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robot.testPeriodic();
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override

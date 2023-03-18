@@ -1,8 +1,7 @@
 package frc3512.robot;
 
-import com.revrobotics.ControlType;
-
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc3512.robot.Constants.Arm;
 import edu.wpi.first.wpilibj.XboxController;
+import frc3512.robot.auton.BalanceChassisCommand;
 import frc3512.robot.subsystems.ArmOld;
 // import frc3512.robot.subsystems.Arm;
 import frc3512.robot.subsystems.ArmExtension;
@@ -30,7 +30,7 @@ import edu.wpi.first.math.filter.Debouncer;
 
 public class Robot2023 {
   // Robot subsystems
-  private Swerve swerve = new Swerve();
+  protected Swerve swerve = new Swerve();
 
    private ArmOld m_armo = new ArmOld();
   // private ArmNew m_arm = new ArmNew();
@@ -69,13 +69,14 @@ public class Robot2023 {
     .leftTrigger()
     .debounce(0.1, Debouncer.DebounceType.kRising)
     .onFalse(new InstantCommand(swerve::hareMode));
-    m_driverController
-    .x()
-    .debounce(0.1, Debouncer.DebounceType.kBoth)
-    .onTrue(new InstantCommand(swerve::lock));
+    // m_driverController
+    // .x()
+    // .debounce(0.1, Debouncer.DebounceType.kBoth)
+    // .onTrue(new InstantCommand(swerve::lock));
 
     m_appendageController.rightBumper().onTrue(new InstantCommand(() -> claw.openClaw()));
     m_appendageController.rightTrigger().onTrue(new InstantCommand(() -> claw.closeClaw()));
+    m_appendageController.a().onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
 
     // m_appendageController
     //   .a()
@@ -106,6 +107,7 @@ public class Robot2023 {
     // if(appendageXbox.getYButton()) {
     //   m_arm.setHigh();
     // }
+
     if(m_appendageController.getRightY() > 0.05) {
       extension.negativeMovement(extension.reachedMinSup);
     } else if(m_appendageController.getRightY() < -0.05) {
@@ -137,6 +139,11 @@ public class Robot2023 {
     extension.zeroingProtocol();
     //m_arm.zeroingProtocol();
   }
+
+  public void balanceTest() {
+    new BalanceChassisCommand(swerve).execute();
+  }
+
   public void armPrint (){
     // SmartDashboard.putNumber("Gearbox Throughbore", m_arm.getDistance());
     // m_arm.setLow();
