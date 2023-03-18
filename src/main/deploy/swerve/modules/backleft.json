@@ -10,7 +10,7 @@
     "canbus": null
   },
   "encoder": {
-    "type": "cancoder",
+    "type": "srx",
     "id": 6,
     "canbus": null
   },
@@ -18,7 +18,7 @@
     "drive": true,
     "angle": true
   },
-  "absoluteEncoderOffset": 59.67773437500001,
+  "absoluteEncoderOffset": 59.4140625,
   "location": {
     "x": -10.5,
     "y": 10.5
