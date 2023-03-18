@@ -5,7 +5,6 @@
 package frc3512.robot;
 
 import com.revrobotics.REVPhysicsSim;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -16,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
 
-import frc3512.robot.auton.BalanceChassisCommand;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -56,7 +54,6 @@ public class Robot extends TimedRobot {
 
     m_robot.configureButtonBindings();
     m_robot.configureAxisActions();
-    m_robot.claw.init();
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot
     // stop
@@ -133,8 +130,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     m_robot.setMotorBrake(true);
 
-    // No arm?! :waaaa:
-    m_robot.armTest();
+    //m_robot.armTest();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -149,6 +145,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robot.periodic();
+    m_robot.m_armo.periodic();
     //m_robot.armPrint();
   }
 

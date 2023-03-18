@@ -35,10 +35,8 @@ public class ArmOld extends SubsystemBase {
     private static double maxVel = 0.1;
     private static double maxAccel = 0;
     private static double minPos = -72;
-    private static double maxPos = 5;
+    private static double maxPos = 20;
     private static double angleCANOffset = 27.58;
-
-    private static SparkMaxLimitSwitch limitSwitch = leaderMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
     public static double armAngle;
     public boolean reachedMax;
@@ -125,9 +123,9 @@ private void armConfigAngleEncoder() {
         //SmartDashboard.putBoolean("Mode", true);
 
         //encoder value
-        //double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
+        double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
         //SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
-        //SmartDashboard.putNumber("Arm Angle", armAngle);
+        SmartDashboard.putNumber("Arm Angle", armAngle);
     }
     
     public void kick() {
@@ -144,18 +142,10 @@ private void armConfigAngleEncoder() {
         // SmartDashboard.putNumber("Arm Angle", armAngle);
         // SmartDashboard.putBoolean("reachedMax", reachedMax);
 
-        if (armAngle > maxPos) {
-            reachedMax = true;
-        } else {
-            reachedMax = false;
-        }
+        reachedMax = armAngle >= maxPos;
+        reachedMin = armAngle <= minPos;
 
-        if (armAngle < minPos || limitSwitch.isPressed()) {
-            reachedMin = true;
-        } else {
-            reachedMin = false;
-        }
-    
+
         //PID CODE START
 
     //     // read PID coefficients from SmartDashboard
@@ -205,18 +195,16 @@ private void armConfigAngleEncoder() {
     //     // PID CODE END
 
      } 
-
+    public void checkBooleans(){
+        reachedMax = armAngle >= maxPos;
+        reachedMin = armAngle <= minPos;
+    }
     public void zeroingProtocol() {
-         //SmartDashboard.putBoolean("zeroing init", true);
-        limitSwitch.enableLimitSwitch(false);
-        while (!limitSwitch.isPressed()) {
-            leaderMotor.set(-0.1);
-        }
-            GearboxEncoder.setZeroOffset(GearboxEncoder.getPosition());
-            leaderMotor.set(0.1);
-            Timer.delay(.5);
-            leaderMotor.set(0);
-            mainPIDMotor.setReference(10, CANSparkMax.ControlType.kPosition);
+        GearboxEncoder.setZeroOffset(GearboxEncoder.getPosition());
+        leaderMotor.set(0.1);
+        Timer.delay(.5);
+        leaderMotor.set(0);
+        mainPIDMotor.setReference(10, CANSparkMax.ControlType.kPosition);
       }
 
     public void simpleArmPositiveMovement(BooleanSupplier max){
@@ -234,6 +222,16 @@ private void armConfigAngleEncoder() {
         }
     }
 
+    public void magicButton(double position) {
+        double tollerance = 2;
+            if (armAngle > position + tollerance) {
+            leaderMotor.set(0.2);
+            } else if (armAngle < position - tollerance) {
+            leaderMotor.set(-0.2);
+            } else {
+                stopMovement();
+            }
+    }
     public void stopMovement() {
         leaderMotor.set(0.01);
     }

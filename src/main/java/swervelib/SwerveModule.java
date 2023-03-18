@@ -1,11 +1,14 @@
 package swervelib;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import swervelib.encoders.SparkMaxEncSwerve;
 import swervelib.encoders.SwerveAbsoluteEncoder;
 import swervelib.math.SwerveModuleState2;
 import swervelib.motors.SwerveMotor;
@@ -67,14 +70,6 @@ public class SwerveModule {
     angleMotor.setLoopRampRate(configuration.physicalCharacteristics.angleMotorRampRate);
     driveMotor.setLoopRampRate(configuration.physicalCharacteristics.driveMotorRampRate);
 
-    // Config angle encoders
-    absoluteEncoder = moduleConfiguration.absoluteEncoder;
-    if (absoluteEncoder != null) {
-      absoluteEncoder.factoryDefault();
-      absoluteEncoder.configure(moduleConfiguration.absoluteEncoderInverted);
-      angleMotor.setPosition(getAbsolutePosition() - angleOffset);
-    }
-
     // Config angle motor/controller
     angleMotor.configureIntegratedEncoder(moduleConfiguration.getPositionEncoderConversion(false));
     angleMotor.configurePIDF(moduleConfiguration.anglePIDF);
@@ -90,6 +85,13 @@ public class SwerveModule {
 
     driveMotor.burnFlash();
     angleMotor.burnFlash();
+
+    // Config angle encoders
+    // Due to a "bug" in rev we need to recreate the encoder after burnFlash
+    absoluteEncoder = new SparkMaxEncSwerve((CANSparkMax) angleMotor.getMotor());
+    absoluteEncoder.factoryDefault();
+    absoluteEncoder.configure(moduleConfiguration.absoluteEncoderInverted);
+    angleMotor.setPosition(getAbsolutePosition() - angleOffset);
 
     if (RobotBase.isSimulation()) {
       simModule = new SwerveModuleSimulation();

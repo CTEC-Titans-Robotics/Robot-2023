@@ -1,4 +1,21 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc3512.robot.subsystems;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc3512.robot.Constants;
+
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAlternateEncoder.Type;
 
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -6,145 +23,113 @@ import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxLimitSwitch;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc3512.lib.util.CANCoderUtil;
-import frc3512.robot.Constants;
-import frc3512.robot.Constants.Arm;
-import frc3512.robot.Constants.ArmConstants;
-import edu.wpi.first.wpilibj.Encoder
-;
+import com.revrobotics.RelativeEncoder;
 
-import java.util.function.DoubleSupplier;
-
+/** Add your docs here. */
 public class ArmNew extends SubsystemBase {
-//motors
-  public static final CANSparkMax m_mainController =
-      new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
-  public static final CANSparkMax m_followerController =
-      new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
-//limit switch
-  private static SparkMaxLimitSwitch m_limitSwitch =
-      m_mainController.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-//Encoder
-  public static final Encoder m_rotationEncoder = new Encoder(0,1);
 
- // public static double getDistance = (m_rotationEncoder.get()/2048) * (360/53.2);
+    private final CANCoder canCoder  = new CANCoder(20);
 
-  private ProfiledPIDController m_pidController = new ProfiledPIDController(
-    Constants.Arm.kP,
-    Constants.Arm.kI,
-    Constants.Arm.kD,
-    new TrapezoidProfile.Constraints(
-        Constants.Arm.kMaxVelocity, Constants.Arm.kMaxAcceleration),
-    Constants.Arm.kDt);
-  // need to do sysid profiling
-  // Feedforward
-  private final ArmFeedforward m_feedforward =
-      new ArmFeedforward(
-          Constants.Arm.kS, Constants.Arm.kG,
-          Constants.Arm.kV, Constants.Arm.kA);
+    private final CANSparkMax leader = new CANSparkMax(Constants.IDs.kArmFollowerCANID, MotorType.kBrushless);
+    private final CANSparkMax follower = new CANSparkMax(Constants.IDs.kArmMainCANID, MotorType.kBrushless);
+    private SparkMaxPIDController PIDcontroller;
+    private RelativeEncoder encoder = leader.getAlternateEncoder(Type.kQuadrature, 8192);
 
-   private final TrapezoidProfile.State High = new State(ArmConstants.highGoalPosition, 0);
-   private final TrapezoidProfile.State Mid = new State(ArmConstants.midGoalPosition, 0);
-   private final TrapezoidProfile.State Low = new State(ArmConstants.lowGoalPosition, 0);
-   private final TrapezoidProfile.State Retracted = new State(10, 0);  
+    private DigitalInput limitSwitch = new DigitalInput(1);
+    private boolean isZeroed = false;
+    
+    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1.5);
+    private final TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(1.75, 0.75);
+    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
+    private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+    
 
+    public final double degreesToClicksFactor = 8192/360;
+    public final double clicksToDegreesFactor = 360/8192;
+    
+    public ArmNew(){
+        SparkMaxPIDController PIDcontroller = leader.getPIDController();
+        PIDcontroller.setP(Constants.Arm.kP);
+        PIDcontroller.setD(Constants.Arm.kD);   
+        PIDcontroller.setI(Constants.Arm.kI); 
+        follower.follow(leader);
+        encoder.setPositionConversionFactor(8192);
+        PIDcontroller.setPositionPIDWrappingMaxInput(Constants.Arm.MAX_POS);
+        PIDcontroller.setPositionPIDWrappingMinInput(Constants.Arm.MIN_POS);
+        PIDcontroller.setFeedbackDevice(encoder);
+        
+        //CANcoder config
 
-  public ArmNew() {
-    //m_rotationEncoder.setDistancePerPulse(1/2048);
-    m_pidController.setTolerance(Constants.Arm.kPosTolerance, Constants.Arm.kVelTolerance);
+        CANCoderConfiguration armconfig = new CANCoderConfiguration();
+        armconfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        armconfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        armconfig.sensorTimeBase = SensorTimeBase.PerSecond;
+        armconfig.sensorCoefficient = 360D/4096D;
+        armconfig.magnetOffsetDegrees = (27.58);
+        canCoder.configFactoryDefault();
+        canCoder.configAllSettings(armconfig);
 
-    m_mainController.setIdleMode(IdleMode.kBrake);
-    m_followerController.setIdleMode(IdleMode.kBrake);
-    m_followerController.follow(m_mainController);
-    armConfig();
-    //zeroingProtocol();
-    m_limitSwitch.enableLimitSwitch(true);
-  }
-
-  private void armConfig() {
-    // CANCoderConfiguration armconfig = new CANCoderConfiguration();
-    // armconfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-    // armconfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-    // armconfig.sensorTimeBase = SensorTimeBase.PerSecond;
-    // armconfig.sensorCoefficient = 0.087890625;
-
-    // m_rotationEncoder.configFactoryDefault();
-    // m_rotationEncoder.configAllSettings(armconfig);
-    // CANCoderUtil.setCANCoderBusUsage(m_rotationEncoder, CANCoderUtil.CANCoderUsage.kMinimal);
-
-    // m_rotationEncoder.setPositionToAbsolute();
-
-  }
-
-  public void zeroingProtocol() {
-     //SmartDashboard.putBoolean("zeroing init", true);
-    m_limitSwitch.enableLimitSwitch(false);
-    while (!m_limitSwitch.isPressed()) {
-      m_mainController.set(-.1);
     }
-    m_mainController.set(0);
-    m_rotationEncoder.reset();
-      
-  }
 
-  public static double getMeasurement() {
-    // TODO: set distance conversion
-    return m_rotationEncoder.get();
-  }
+    public void outputTelemetry() {
+        SmartDashboard.putBoolean("zeroing init", isZeroed);
+        SmartDashboard.putNumber("Arm CANCoder value", canCoder.getAbsolutePosition());
+        SmartDashboard.putNumber("Arm Gearbox encoder value", encoder.getPosition());
+    }
+    public void zeroArm (){
+        isZeroed = true;
+        while (limitSwitch.get()) {
+            leader.set(-0.1);
+        }
+            encoder.setPosition(encoder.getPosition());
+            leader.set(0.1);
+            Timer.delay(.5);
+            leader.set(0);
+    }
 
-  
-  public void useOutput(TrapezoidProfile.State setpoint) {
-    // Calculate the feedforward from the sepoint
-    // double feedforward = m_feedforward.calculate(setpoint.position * (Math.PI / 180), setpoint.velocity);
+    //intializing function
+    public void start(){
+        zeroArm();
+    }
 
-    // Add the feedforward to the PID output to get the motor output
-    double test = m_pidController.calculate(getDistance(), setpoint);
-    //SmartDashboard.putNumber("PID VOLTAGE", test);
-    // SmartDashboard.putNumber("FEEDFOWARD VOLTAGE", feedforward);
-    if ((test <= 1 && test >= -1)) test = 0;
-    if (test >= 8) test = 8;
-    if (test <= -8) test = -8;
-    m_mainController.setVoltage(test + 0);
-  }
+    //runs periodicaly in teleop
+    public void updateStates(){
+        var profile = new TrapezoidProfile(m_constraints, m_goal, m_setpoint);
 
-  public void incrementing(DoubleSupplier yAxis) {
+        m_setpoint = profile.calculate(0.02);
+        //Gives sparkmax pid controller wpi feedfoward and state info
+        PIDcontroller.setReference
+            (m_setpoint.position, 
+            ControlType.kPosition, 
+    1, 
+            m_feedforward.calculate(m_setpoint.velocity)/12.0);
+    }
 
-  }
-  public double getDistance() {
-    return (m_rotationEncoder.get()/2048) * (360/53.2);
-  }
+    //this function takes DEGREES
+    public void moveTo(double position) {  
+        position = position*(clicksToDegreesFactor) - 10;
+            m_goal = new TrapezoidProfile.State(position, 0);
+    }
 
-  public void setHigh() {
-    useOutput(High);
-  }
-  public void setMid() {
-    useOutput(Mid);
-  }
-  public void setLow() {
-    useOutput(Low);
-  }
-  public void setRetract(){
-    useOutput(Retracted);
-  }
+    //add increments to a new position and waits before doing again
+    public void moveByIncrements(double increments, double updateTime) {
+        double lastPosition = m_setpoint.position*(clicksToDegreesFactor) - 10;
+        m_goal = new TrapezoidProfile.State(lastPosition + increments, 0);   
+        Timer.delay(updateTime);
 
-  public Command setLowCommand(){
-    return run(() -> setLow());
-  }
-  public Command setMidCommand(){
-    return run(() -> setMid());
-  }
-  public Command setHighCommand(){
-    return run(() -> setHigh());
-  }
+    //if the "setPositionPIDWrappingMinInput()" or "setPositionPIDWrappingMaxInput()" function does not work in the constructor
+
+        // if ((lastPosition + increments > Constants.Arm.maxPos) || (lastPosition + increments < Constants.Arm.minPos)){
+        //     m_goal = new TrapezoidProfile.State(lastPosition, 0);   
+        // } else {
+        //     m_goal = new TrapezoidProfile.State(lastPosition + increments, 0);
+        //     Timer.delay(updateTime);
+        // }
+    }
+
+    public void moveByController(double controllerAxis, double speed) {
+        //speed = degrees per second at maxiumum throttle
+        moveByIncrements(controllerAxis, speed);
+    } 
 }
+
