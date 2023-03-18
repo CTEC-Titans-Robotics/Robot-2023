@@ -8,6 +8,7 @@ public class SparkMaxEncSwerve extends SwerveAbsoluteEncoder {
 
     public SparkMaxEncSwerve(CANSparkMax motor) {
         encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+        encoder.setPositionConversionFactor(360);
     }
 
     @Override
