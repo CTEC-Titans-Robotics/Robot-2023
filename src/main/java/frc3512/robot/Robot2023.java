@@ -19,7 +19,6 @@ public class Robot2023 {
   protected Swerve swerve = new Swerve();
 
    public ArmOld m_armo = new ArmOld();
-   private ArmNew m_arm = new ArmNew();
 
   public Intake intake = new Intake();
   public Autos autos = new Autos(swerve);
