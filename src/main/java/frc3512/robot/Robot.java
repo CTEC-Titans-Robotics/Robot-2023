@@ -5,6 +5,7 @@
 package frc3512.robot;
 
 import com.revrobotics.REVPhysicsSim;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -51,6 +52,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Disable joystick warnings
     DriverStation.silenceJoystickConnectionWarning(true);
+    CameraServer.startAutomaticCapture();
 
     m_robot.configureButtonBindings();
     m_robot.configureAxisActions();
