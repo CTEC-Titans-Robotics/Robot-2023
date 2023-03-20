@@ -1,50 +1,35 @@
 package swervelib.imu;
 
-import com.ctre.phoenix.sensors.Pigeon2Configuration;
-import com.ctre.phoenix.sensors.WPI_Pigeon2;
-import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Optional;
 
 /**
- * SwerveIMU interface for the Pigeon2
+ * IMU Swerve class for the {@link ADIS16470_IMU} device.
  */
-public class Pigeon2Swerve extends SwerveIMU
+public class ADIS16470Swerve extends SwerveIMU
 {
 
   /**
-   * Pigeon2 IMU device.
+   * {@link ADIS16470_IMU} device to read the current headings from.
    */
-  WPI_Pigeon2 imu;
+  private final ADIS16470_IMU imu;
   /**
-   * Offset for the Pigeon 2.
+   * Offset for the ADIS16470.
    */
-  private Rotation3d offset = new Rotation3d();
+  private       Rotation3d    offset = new Rotation3d();
 
   /**
-   * Generate the SwerveIMU for pigeon.
-   *
-   * @param canid  CAN ID for the pigeon
-   * @param canbus CAN Bus name the pigeon resides on.
+   * Construct the ADIS16470 imu and reset default configurations. Publish the gyro to the SmartDashboard.
    */
-  public Pigeon2Swerve(int canid, String canbus)
+  public ADIS16470Swerve()
   {
-    imu = new WPI_Pigeon2(canid, canbus);
-    Pigeon2Configuration config = new Pigeon2Configuration();
-    imu.configAllSettings(config);
+    imu = new ADIS16470_IMU();
+    offset = new Rotation3d();
+    factoryDefault();
     SmartDashboard.putData(imu);
-  }
-
-  /**
-   * Generate the SwerveIMU for pigeon.
-   *
-   * @param canid CAN ID for the pigeon
-   */
-  public Pigeon2Swerve(int canid)
-  {
-    this(canid, "");
   }
 
   /**
@@ -53,8 +38,9 @@ public class Pigeon2Swerve extends SwerveIMU
   @Override
   public void factoryDefault()
   {
-    imu.configFactoryDefault();
-    imu.configEnableCompass(false); // Compass utilization causes readings to jump dramatically in some cases.
+    offset = new Rotation3d(
+        Math.toRadians(imu.getYComplementaryAngle()), Math.toRadians(imu.getXComplementaryAngle()),
+        Math.toRadians(imu.getAngle()));
   }
 
   /**
@@ -63,7 +49,7 @@ public class Pigeon2Swerve extends SwerveIMU
   @Override
   public void clearStickyFaults()
   {
-    imu.clearStickyFaults();
+    // Do nothing.
   }
 
   /**
@@ -81,12 +67,11 @@ public class Pigeon2Swerve extends SwerveIMU
    *
    * @return {@link Rotation3d} from the IMU.
    */
-  @Override
   public Rotation3d getRawRotation3d()
   {
-    double[] wxyz = new double[4];
-    imu.get6dQuaternion(wxyz);
-    return new Rotation3d(new Quaternion(wxyz[0], wxyz[1], wxyz[2], wxyz[3]));
+    return new Rotation3d(
+        Math.toRadians(imu.getYComplementaryAngle()), Math.toRadians(imu.getXComplementaryAngle()),
+        Math.toRadians(imu.getAngle()));
   }
 
   /**
@@ -109,9 +94,7 @@ public class Pigeon2Swerve extends SwerveIMU
   @Override
   public Optional<Translation3d> getAccel()
   {
-    short[] initial = new short[3];
-    imu.getBiasedAccelerometer(initial);
-    return Optional.of(new Translation3d(initial[0], initial[1], initial[2]).times(9.81 / 16384.0));
+    return Optional.of(new Translation3d(imu.getAccelX(), imu.getAccelY(), imu.getAccelZ()));
   }
 
   /**
