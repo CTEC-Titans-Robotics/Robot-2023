@@ -21,7 +21,7 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder {
    * @param id CAN ID.
    */
   public CANCoderSwerve(int id) {
-    encoder = new WPI_CANCoder(id);
+    encoder = new WPI_CANCoder(id, "ctre");
   }
 
   /**

@@ -28,7 +28,7 @@ import com.revrobotics.RelativeEncoder;
 /** Add your docs here. */
 public class ArmNew extends SubsystemBase {
 
-    private final CANCoder canCoder  = new CANCoder(20);
+    private final CANCoder canCoder  = new CANCoder(7, "ctre");
 
     private final CANSparkMax leader = new CANSparkMax(Constants.IDs.kArmFollowerCANID, MotorType.kBrushless);
     private final CANSparkMax follower = new CANSparkMax(Constants.IDs.kArmMainCANID, MotorType.kBrushless);

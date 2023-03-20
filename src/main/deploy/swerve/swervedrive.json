@@ -4,7 +4,7 @@
   "imu": {
     "type": "pigeon2",
     "id": 21,
-    "canbus": null
+    "canbus": "ctre"
   },
   "invertedIMU": false,
   "modules": [
