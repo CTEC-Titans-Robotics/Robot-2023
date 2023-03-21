@@ -68,7 +68,7 @@ public final class Constants {
     public static final Translation3d chassisCG = new Translation3d(0, 0, Units.inchesToMeters(8));
     // public static final double loopTime = 0.13;
 
-    public static final double kLoopPeriod = 0.01;
+    public static final double kLoopPeriod = .02;
   }
 
   /** Constants revolving around joysticks */

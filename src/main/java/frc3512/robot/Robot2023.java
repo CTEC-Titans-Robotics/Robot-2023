@@ -112,7 +112,6 @@ public class Robot2023 {
     } else {
       extension.stopMovement();
     }
-    //SmartDashboard.putNumber("Gearbox Throughbore", m_arm.m_rotationEncoder.get());
 
     if(m_appendageController.getHID().getLeftY() > 0.05) {
       m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
