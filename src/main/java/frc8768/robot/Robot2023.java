@@ -40,7 +40,7 @@ public class Robot2023 {
 
   /** Used for defining button actions. */
   public void configureButtonBindings() {
-    m_driverController.back().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.zeroGyro()));
+    m_driverController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.zeroGyro()));
     m_driverController
             .leftTrigger()
             .debounce(0.1, Debouncer.DebounceType.kBoth)

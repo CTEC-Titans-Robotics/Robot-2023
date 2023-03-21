@@ -4,6 +4,8 @@
 
 package frc8768.lib.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /** Add your docs here. */
 public class SynchronousPIDF {
     private double m_P; // factor for "proportional" control
@@ -106,6 +108,10 @@ public class SynchronousPIDF {
         m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / dt
                 + m_F * m_setpoint);
         m_prevError = m_error;
+        SmartDashboard.putNumber("rotational p", m_P);
+        SmartDashboard.putNumber("rotational i", m_I);
+        SmartDashboard.putNumber("rotational d", m_D);
+        SmartDashboard.putNumber("rotation error", m_error);
 
         if (m_result > m_maximumOutput) {
             m_result = m_maximumOutput;

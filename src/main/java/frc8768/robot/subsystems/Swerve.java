@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc8768.lib.HeadingController;
@@ -59,6 +60,7 @@ public class Swerve extends SubsystemBase {
     this.m_tortoiseAngularVelocity = 1;
 
     m_headingController = new HeadingController();
+    m_headingController.setTargetHeading(0);
 
     m_snapController = new SnapController();
     m_snapController.setTargetHeading(180);
@@ -85,13 +87,18 @@ public class Swerve extends SubsystemBase {
 
           translationVal= Math.pow(translationVal, 3);
           strafeVal= Math.pow(strafeVal, 3);
-          rotationVal= Math.pow(rotationVal, 3);
+          if (Math.hypot(translationVal, strafeVal) >= 0.5) {
+            rotationVal *= .05;
+          }
+          else {
+            rotationVal= Math.pow(rotationVal, 3);
+          }
 
           double rotationCorrection = 0;
           m_heading = getGyroYaw();
           if (Math.abs(rotationVal) != 0) { // this check could be made more accurate with a bool and counter
             m_headingController.setTargetHeading(m_heading.getDegrees());
-            rotationCorrection = m_headingController.updateRotationCorrection(getSnapHeading(), rotationCorrection);
+            rotationCorrection = m_headingController.updateRotationCorrection(m_heading, rotationCorrection);
           }
           else if (m_snapEnabled) {
             m_headingController.setTargetHeading(m_heading.getDegrees());
@@ -99,14 +106,18 @@ public class Swerve extends SubsystemBase {
             // timer value is not correct?
           } 
           else {
-            rotationCorrection = m_headingController.updateRotationCorrection(getSnapHeading(), rotationCorrection);
+            rotationCorrection = m_headingController.updateRotationCorrection(m_heading, rotationCorrection);
           }
+
+          
+          // SmartDashboard.putNumber("rotation correction", rotationCorrection);
+          // SmartDashboard.putNumber("rotation heading", m_heading.getDegrees());
           drive(
               new Translation2d(translationVal, strafeVal)
                   .times(swerve.swerveController.config.maxSpeed),
               (rotationVal * swerve.swerveController.config.maxAngularVelocity) + rotationCorrection,
               true,
-              false);
+              true);
         })
         .withName("TeleopSwerve");
   }
