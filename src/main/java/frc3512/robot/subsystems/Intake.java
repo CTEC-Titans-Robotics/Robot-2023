@@ -12,7 +12,8 @@ public class Intake extends SubsystemBase {
     CANSparkMax m_intake;
 
     private boolean m_isHeld;
-    private boolean m_isRunning;
+    private boolean m_isIntaking;
+    private boolean m_isExhausting;
     private Timer m_timer;
 
     public Intake() {
@@ -31,45 +32,55 @@ public class Intake extends SubsystemBase {
 
         m_intake.burnFlash();
 
-        m_isRunning = false;
+        m_isIntaking = false;
         m_isHeld = false;
+        m_isExhausting = false;
 
         m_timer = new Timer();
     }
 
     @Override
     public void periodic() {
-        if(!m_isHeld && m_timer.hasElapsed(1) && m_intake.getOutputCurrent() >= 80) {
+        if(m_isIntaking && m_timer.hasElapsed(.25) && m_intake.getOutputCurrent() >= 80) {
             m_isHeld = true;
-            m_isRunning = false;
+            m_isIntaking = false;
             m_intake.set(-0.1);
             m_timer.stop();
             m_timer.reset();
+        }
+        if (m_isIntaking && m_timer.hasElapsed(7.5)) {
+            m_isIntaking = false;
+            m_isHeld = false;
+            m_intake.set(0);
+            m_timer.stop();
+            m_timer.reset();
+        }
+        if (m_isExhausting && m_timer.hasElapsed(.5)) {
+            m_intake.set(0);
+            m_isExhausting = false;
+            m_timer.stop();
         }
     }
 
     
 
-    public void in() {
-        if(!m_isHeld && !m_isRunning) {
+    public void drive() {
+        if(!m_isHeld && !m_isIntaking) {
             m_intake.set(-0.75);
             m_timer.reset();
             m_timer.start();
-            m_isRunning = true; // needed for timer
+            m_isIntaking = true; // needed for timer
         }
-    }
-    public void out() {
         if (m_isHeld) {
             m_isHeld = false;
+            m_isExhausting = true;
+            m_timer.reset();
+            m_timer.start();
             m_intake.set(0.75);
         }
     }
-    public void stopMovement() {
-        m_intake.set(0);
-        m_isRunning = false;
-    }
 
-    public void printVoltage() {
-        SmartDashboard.putNumber("Intake Current", m_intake.getOutputCurrent());
-    }
+    // public void printVoltage() {
+    // //     SmartDashboard.putNumber("Intake Current", m_intake.getOutputCurrent());
+    // // }
 }

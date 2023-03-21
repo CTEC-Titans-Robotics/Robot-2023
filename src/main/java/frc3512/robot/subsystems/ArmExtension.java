@@ -65,7 +65,7 @@ public class ArmExtension extends SubsystemBase {
             extension.set(-.1);
             // current_sum += extension.getOutputCurrent();
             while (true) {
-              if (extension.getOutputCurrent() > 25 && ++loop_counter >= 10000) {
+              if (++loop_counter >= 10000 && extension.getOutputCurrent() > 25) {
                 extension.stopMotor();
                 relavitveEncoder.setPosition(0);
                 break;

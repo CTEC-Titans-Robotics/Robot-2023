@@ -40,7 +40,7 @@ public class Robot2023 {
     swerve.setMotorBrake(brake);
   }
 
-  
+
   /** Used for defining button actions. */
   public void configureButtonBindings() {
     m_driverController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.zeroGyro()));
@@ -60,12 +60,12 @@ public class Robot2023 {
     // .debounce(0.1, Debouncer.DebounceType.kBoth)
     // .onTrue(new InstantCommand(swerve::lock));
 
-    m_appendageController.a().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.in()));
-    m_appendageController.x().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.out()));
-    m_appendageController.y()
-            .debounce(0.1, Debouncer.DebounceType.kBoth)
-            .onTrue((new InstantCommand(() -> intake.stopMovement())));
-    m_appendageController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
+    m_appendageController.a().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.drive()));
+    // m_appendageController.x().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.out()));
+    // m_appendageController.y()
+    //         .debounce(0.1, Debouncer.DebounceType.kBoth)
+    //         .onTrue((new InstantCommand(() -> intake.stopMovement())));
+    m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
     m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(-62)));
     m_appendageController.povLeft().onTrue(new InstantCommand(() -> m_armo.magicButton(-4.464765624999998)));
 
@@ -122,7 +122,6 @@ public class Robot2023 {
       m_armo.stopMovement();
     }
 
-    intake.printVoltage();
   }
 
   /* Used for joystick/xbox axis actions. */
