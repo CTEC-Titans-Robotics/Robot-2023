@@ -2,6 +2,7 @@ package frc3512.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +19,16 @@ public class Intake extends SubsystemBase {
         m_intake = new CANSparkMax(35, MotorType.kBrushless);
         m_intake.restoreFactoryDefaults();
         // m_intake.setSecondaryCurrentLimit(15);
+
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // sticky faults?
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10); // current and temp
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 60000); // motor position
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 60000); // analog sensor
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 60000); // encoder
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 60000); // encoder
+        m_intake.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 60000); // encoder
+        m_intake.setControlFramePeriodMs(10);
+
         m_intake.burnFlash();
 
         m_isRunning = false;
