@@ -40,7 +40,7 @@ public class Robot2023 {
     swerve.setMotorBrake(brake);
   }
 
-
+  
   /** Used for defining button actions. */
   public void configureButtonBindings() {
     m_driverController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.zeroGyro()));

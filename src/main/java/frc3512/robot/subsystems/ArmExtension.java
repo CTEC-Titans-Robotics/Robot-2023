@@ -26,8 +26,8 @@ public class ArmExtension extends SubsystemBase {
     public static boolean isZeroed;
     public static double rotationCounter;
     public double extDistance;
-    public double maxPos = 5; //4.8
-    public double minPos = -0.5; // 0.1
+    public double maxPos = 2.5; //4.8
+    public double minPos = 0.4; // 0.1
     public boolean reachedMax;
     public boolean reachedMin;
     public BooleanSupplier reachedMaxSup = () -> reachedMax;
@@ -49,6 +49,7 @@ public class ArmExtension extends SubsystemBase {
         //SmartDashboard.putBoolean("Zeroed", isZeroed);
         //SmartDashboard.putNumber("minPosExt", extDistance);
         extDistance = relavitveEncoder.getPosition();
+        SmartDashboard.putNumber("extension rotations", extDistance);
 
         reachedMax = extDistance > maxPos;
 
@@ -60,16 +61,16 @@ public class ArmExtension extends SubsystemBase {
 
     public void zeroingProtocol() {
             int loop_counter = 0;
-            double current_sum = 0;
-            extension.set(-.05);
-            current_sum += extension.getOutputCurrent();
+            // double current_sum = 0;
+            extension.set(-.1);
+            // current_sum += extension.getOutputCurrent();
             while (true) {
-              if (extension.getOutputCurrent() > 1.5) {
+              if (extension.getOutputCurrent() > 25 && ++loop_counter >= 10000) {
                 extension.stopMotor();
                 relavitveEncoder.setPosition(0);
                 break;
               }
-              current_sum += extension.getOutputCurrent();
+            //   current_sum += extension.getOutputCurrent();
             }
           }
     public void positiveMovement(BooleanSupplier max){
