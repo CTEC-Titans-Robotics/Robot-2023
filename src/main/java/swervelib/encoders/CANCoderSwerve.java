@@ -3,6 +3,7 @@ package swervelib.encoders;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.ctre.phoenix.sensors.MagnetFieldStrength;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
@@ -59,6 +60,8 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder {
     canCoderConfiguration.initializationStrategy =
         SensorInitializationStrategy.BootToAbsolutePosition;
     canCoderConfiguration.sensorTimeBase = SensorTimeBase.PerSecond;
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
+    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 200);
     encoder.configAllSettings(canCoderConfiguration);
   }
 
