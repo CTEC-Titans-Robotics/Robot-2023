@@ -62,7 +62,7 @@ public class Robot2023 {
 
     m_appendageController.a().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.in()));
     m_appendageController.x().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.out()));
-    m_appendageController.a().and(m_appendageController.x())
+    m_appendageController.y()
             .debounce(0.1, Debouncer.DebounceType.kBoth)
             .onTrue((new InstantCommand(() -> intake.stopMovement())));
     m_appendageController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
