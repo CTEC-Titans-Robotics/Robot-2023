@@ -136,9 +136,9 @@ private void armConfigAngleEncoder() {
         // initDashboard();
         double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
         // SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber("Arm Angle", armAngle);
-        SmartDashboard.putBoolean("reachedMax", reachedMax);
-        SmartDashboard.putBoolean("reachedMin", reachedMin);
+        // SmartDashboard.putNumber("Arm Angle", armAngle);
+        // SmartDashboard.putBoolean("reachedMax", reachedMax);
+        // SmartDashboard.putBoolean("reachedMin", reachedMin);
 
         reachedMax = armAngle >= maxPos;
         reachedMin = armAngle <= minPos;

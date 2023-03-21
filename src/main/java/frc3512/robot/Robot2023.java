@@ -157,6 +157,6 @@ public class Robot2023 {
   }
 
   public void testPeriodic() {
-    SmartDashboard.putNumber("Gyro Roll", swerve.getGyroRot().getDegrees());
+    // SmartDashboard.putNumber("Gyro Roll", swerve.getGyroRot().getDegrees());
   }
 }

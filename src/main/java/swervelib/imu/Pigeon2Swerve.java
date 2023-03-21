@@ -20,7 +20,7 @@ public class Pigeon2Swerve extends SwerveIMU {
     imu = new WPI_Pigeon2(canid, canbus);
     Pigeon2Configuration config = new Pigeon2Configuration();
     imu.configAllSettings(config);
-    SmartDashboard.putData(imu);
+    // SmartDashboard.putData(imu);
   }
 
   /**

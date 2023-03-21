@@ -44,6 +44,6 @@ public class Intake extends SubsystemBase {
     }
 
     public void printVoltage() {
-        SmartDashboard.putNumber("Intake Current", intake.getOutputCurrent());
+        // SmartDashboard.putNumber("Intake Current", intake.getOutputCurrent());
     }
 }

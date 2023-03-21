@@ -196,7 +196,7 @@ public class SwerveMath {
     double horizontalDistance = projectedHorizontalCg.plus(projectedWheelbaseEdge).getNorm();
     double maxAccel = 9.81 * horizontalDistance / robotCG.getZ();
 
-    SmartDashboard.putNumber("calcMaxAccel", maxAccel);
+    // SmartDashboard.putNumber("calcMaxAccel", maxAccel);
     return maxAccel;
   }
 
@@ -228,12 +228,12 @@ public class SwerveMath {
       SwerveDriveConfiguration config) {
     // Get the robot's current field-relative velocity
     Translation2d currentVelocity = SwerveController.getTranslation2d(fieldVelocity);
-    SmartDashboard.putNumber("currentVelocity", currentVelocity.getX());
+    // SmartDashboard.putNumber("currentVelocity", currentVelocity.getX());
 
     // Calculate the commanded change in velocity by subtracting current velocity
     // from commanded velocity
     Translation2d deltaV = commandedVelocity.minus(currentVelocity);
-    SmartDashboard.putNumber("deltaV", deltaV.getX());
+    // SmartDashboard.putNumber("deltaV", deltaV.getX());
 
     // Creates an acceleration vector with the direction of delta V and a magnitude
     // of the maximum allowed acceleration in that direction
