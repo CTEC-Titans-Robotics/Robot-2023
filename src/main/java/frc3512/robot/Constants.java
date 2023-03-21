@@ -66,7 +66,9 @@ public final class Constants {
     public static final double robotMass = (148 - 20.3) * 0.453592;
     public static final double chassisMass = robotMass;
     public static final Translation3d chassisCG = new Translation3d(0, 0, Units.inchesToMeters(8));
-    public static final double loopTime = 0.13;
+    // public static final double loopTime = 0.13;
+
+    public static final double kLoopPeriod = 0.01;
   }
 
   /** Constants revolving around joysticks */

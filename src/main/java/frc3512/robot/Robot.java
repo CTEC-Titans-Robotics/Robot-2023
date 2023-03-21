@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
 
   /** Robot constructor */
   public Robot() {
+    super(Constants.GeneralConstants.kLoopPeriod);
     instance = this;
   }
 
