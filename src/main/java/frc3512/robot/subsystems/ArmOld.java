@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc3512.lib.util.CANCoderUtil;
 import frc3512.robot.Constants;
 
 import java.util.function.BooleanSupplier;
@@ -95,8 +94,10 @@ private void armConfigAngleEncoder() {
     armconfig.sensorCoefficient = 0.087890625;
 
     topEncoder.configFactoryDefault();
+    topEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 200);
+    topEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
     topEncoder.configAllSettings(armconfig);
-    CANCoderUtil.setCANCoderBusUsage(topEncoder, CANCoderUtil.CANCoderUsage.kMinimal);
+
 
     topEncoder.setPositionToAbsolute();
     followerMotor.setIdleMode(IdleMode.kBrake);
