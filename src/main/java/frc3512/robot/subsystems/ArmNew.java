@@ -72,9 +72,9 @@ public class ArmNew extends SubsystemBase {
     }
 
     public void outputTelemetry() {
-        SmartDashboard.putBoolean("zeroing init", isZeroed);
-        SmartDashboard.putNumber("Arm CANCoder value", canCoder.getAbsolutePosition());
-        SmartDashboard.putNumber("Arm Gearbox encoder value", encoder.getPosition());
+        // SmartDashboard.putBoolean("zeroing init", isZeroed);
+        // SmartDashboard.putNumber("Arm CANCoder value", canCoder.getAbsolutePosition());
+        // SmartDashboard.putNumber("Arm Gearbox encoder value", encoder.getPosition());
     }
     public void zeroArm (){
         isZeroed = true;

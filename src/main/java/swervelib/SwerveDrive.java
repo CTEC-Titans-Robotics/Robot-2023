@@ -96,7 +96,7 @@ public class SwerveDrive {
     zeroGyro();
 
     // Initialize Telemetry
-    SmartDashboard.putData("Field", field);
+    // SmartDashboard.putData("Field", field);
 
     SwerveDriveTelemetry.maxSpeed = swerveDriveConfiguration.maxSpeed;
     SwerveDriveTelemetry.maxAngularVelocity = swerveController.config.maxAngularVelocity;
@@ -148,7 +148,7 @@ public class SwerveDrive {
             : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
 
     // Display commanded speed for testing
-    SmartDashboard.putString("RobotVelocity", velocity.toString());
+    // SmartDashboard.putString("RobotVelocity", velocity.toString());
     SwerveDriveTelemetry.desiredChassisSpeeds[1] = velocity.vyMetersPerSecond;
     SwerveDriveTelemetry.desiredChassisSpeeds[0] = velocity.vxMetersPerSecond;
     SwerveDriveTelemetry.desiredChassisSpeeds[2] = Math.toDegrees(velocity.omegaRadiansPerSecond);
@@ -178,12 +178,12 @@ public class SwerveDrive {
           moduleState.speedMetersPerSecond;
 
       module.setDesiredState(desiredStates[module.moduleNumber], isOpenLoop, false);
-      SmartDashboard.putNumber(
-          "Module " + module.moduleNumber + " Speed Setpoint: ",
-          desiredStates[module.moduleNumber].speedMetersPerSecond);
-      SmartDashboard.putNumber(
-          "Module " + module.moduleNumber + " Angle Setpoint: ",
-          desiredStates[module.moduleNumber].angle.getDegrees());
+      // SmartDashboard.putNumber(
+      //     "Module " + module.moduleNumber + " Speed Setpoint: ",
+      //     desiredStates[module.moduleNumber].speedMetersPerSecond);
+      // SmartDashboard.putNumber(
+      //     "Module " + module.moduleNumber + " Angle Setpoint: ",
+      //     desiredStates[module.moduleNumber].angle.getDegrees());
     }
   }
 
@@ -444,10 +444,10 @@ public class SwerveDrive {
 
       sumOmega += Math.abs(moduleState.omegaRadPerSecond);
 
-      SmartDashboard.putNumber(
-          "Module" + module.moduleNumber + "Relative Encoder", module.getRelativePosition());
-      SmartDashboard.putNumber(
-          "Module" + module.moduleNumber + "Absolute Encoder", module.getAbsolutePosition());
+      // SmartDashboard.putNumber(
+      //     "Module" + module.moduleNumber + "Relative Encoder", module.getRelativePosition());
+      // SmartDashboard.putNumber(
+      //     "Module" + module.moduleNumber + "Absolute Encoder", module.getAbsolutePosition());
     }
 
     // If the robot isn't moving synchronize the encoders every 100ms (Inspired by democrat's SDS
@@ -458,7 +458,7 @@ public class SwerveDrive {
       moduleSynchronizationCounter = 0;
     }
 
-    SwerveDriveTelemetry.updateData();
+    // SwerveDriveTelemetry.updateData();
   }
 
   /** Synchronize angle motor integrated encoders with data from absolute encoders. */
