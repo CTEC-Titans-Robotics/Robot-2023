@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc8768.lib.geometry.Rotation2d254;
+
 import java.util.ArrayList;
 import java.util.List;
 import swervelib.imu.SwerveIMU;
@@ -309,6 +311,18 @@ public class SwerveDrive {
     } else {
       return simIMU.getYaw();
     }
+  }
+
+  /**
+   * Gets the current yaw angle of the robot, as reported by the imu. CCW positive, not wrapped.
+   *
+   * @return The yaw as a {@link Rotation2d} angle
+   */
+  public Rotation2d254 getYaw254() {
+    // Read the imu if the robot is real or the accumulator if the robot is simulated.   
+      double[] ypr = new double[3];
+      imu.getYawPitchRoll(ypr);
+      return Rotation2d254.fromDegrees(swerveDriveConfiguration.invertedIMU ? 360 - ypr[0] : ypr[0]);
   }
 
   /**

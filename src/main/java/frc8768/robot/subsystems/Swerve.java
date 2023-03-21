@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc8768.lib.HeadingController;
@@ -36,8 +37,11 @@ public class Swerve extends SubsystemBase {
   private final double m_hareSpeed;
   private final double m_hareAngularVelocity;
 
-  HeadingController headingController;
-  SnapController snapController;
+  private Rotation2d254 m_heading;
+  private HeadingController m_headingController;
+
+  private SnapController m_snapController;
+  private boolean m_snapEnabled;
 
   /** Subsystem class for the swerve drive. */
   public Swerve() {
@@ -54,8 +58,11 @@ public class Swerve extends SubsystemBase {
     this.m_tortoiseSpeed = .75;
     this.m_tortoiseAngularVelocity = 1;
 
-    headingController = new HeadingController();
-    snapController = new SnapController();
+    m_headingController = new HeadingController();
+
+    m_snapController = new SnapController();
+    m_snapController.setTargetHeading(180);
+    m_snapEnabled = false;
   }
 
   public Command drive(
@@ -65,21 +72,39 @@ public class Swerve extends SubsystemBase {
               translationLimiter.calculate(
                   MathUtil.applyDeadband(
                       translationSup.getAsDouble(), 0.1));
+
           double strafeVal =
               strafeLimiter.calculate(
                   MathUtil.applyDeadband(
                       strafeSup.getAsDouble(), 0.1));
+
           double rotationVal =
               rotationLimiter.calculate(
                   MathUtil.applyDeadband(
                       rotationSup.getAsDouble(), 0.1));
+
           translationVal= Math.pow(translationVal, 3);
           strafeVal= Math.pow(strafeVal, 3);
           rotationVal= Math.pow(rotationVal, 3);
+
+          double rotationCorrection = 0;
+          m_heading = getGyroYaw();
+          if (Math.abs(rotationVal) != 0) { // this check could be made more accurate with a bool and counter
+            m_headingController.setTargetHeading(m_heading.getDegrees());
+            rotationCorrection = m_headingController.updateRotationCorrection(getSnapHeading(), rotationCorrection);
+          }
+          else if (m_snapEnabled) {
+            m_headingController.setTargetHeading(m_heading.getDegrees());
+            rotationCorrection = m_snapController.updateRotationCorrection(m_heading, Timer.getFPGATimestamp());
+            // timer value is not correct?
+          } 
+          else {
+            rotationCorrection = m_headingController.updateRotationCorrection(getSnapHeading(), rotationCorrection);
+          }
           drive(
               new Translation2d(translationVal, strafeVal)
                   .times(swerve.swerveController.config.maxSpeed),
-              rotationVal * swerve.swerveController.config.maxAngularVelocity,
+              (rotationVal * swerve.swerveController.config.maxAngularVelocity) + rotationCorrection,
               true,
               false);
         })
@@ -87,10 +112,11 @@ public class Swerve extends SubsystemBase {
   }
 
   public void setSnapHeading(double heading){
-    snapController.setTargetHeading(heading);
-}
-public Rotation2d254 getSnapHeading(){
-      return snapController.getTargetHeading();
+      m_snapController.setTargetHeading(heading);
+  }
+
+  public Rotation2d254 getSnapHeading(){
+      return m_snapController.getTargetHeading();
   }
 
   public void drive(
@@ -108,6 +134,10 @@ public Rotation2d254 getSnapHeading(){
 
   public Rotation2d getGyroRot() {
     return swerve.getRoll();
+  }
+
+  public Rotation2d254 getGyroYaw() {
+    return swerve.getYaw254();
   }
 
   public void zeroGyro() {
