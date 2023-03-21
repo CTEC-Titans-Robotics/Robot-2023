@@ -147,7 +147,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robot.periodic();
-    m_robot.m_armo.periodic();
     //m_robot.armPrint();
   }
 

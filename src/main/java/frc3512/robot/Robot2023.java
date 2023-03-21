@@ -65,6 +65,8 @@ public class Robot2023 {
     m_appendageController.rightBumper().and(m_appendageController.rightTrigger())
             .onFalse(new InstantCommand(() -> intake.stopMovement()));
     m_appendageController.a().onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
+    m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(-62)));
+    m_appendageController.povLeft().onTrue(new InstantCommand(() -> m_armo.magicButton(-4.464765624999998)));
 
 //    m_appendageController.povUp().onTrue(new InstantCommand(() -> m_armo.magicButton(60)));
 //    m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(45)));
@@ -98,24 +100,28 @@ public class Robot2023 {
     // if(appendageXbox.getYButton()) {
     //   m_arm.setHigh();
     // }
-    m_armo.checkBooleans();
 
-    if(m_appendageController.getRightY() > 0.05) {
+    m_armo.periodic();
+    intake.periodic();
+
+    if(m_appendageController.getHID().getRightY() > 0.05) {
       extension.negativeMovement(extension.reachedMinSup);
-    } else if(m_appendageController.getRightY() < -0.05) {
+    } else if(m_appendageController.getHID().getRightY() < -0.05) {
       extension.positiveMovement(extension.reachedMaxSup);
     } else {
       extension.stopMovement();
     }
     //SmartDashboard.putNumber("Gearbox Throughbore", m_arm.m_rotationEncoder.get());
 
-    if(m_appendageController.getLeftY() > 0.1) {
+    if(m_appendageController.getHID().getLeftY() > 0.05) {
       m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
-    } else if(m_appendageController.getLeftY() < -0.1) {
+    } else if(m_appendageController.getHID().getLeftY() < -0.05) {
       m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
     } else {
       m_armo.stopMovement();
     }
+
+    intake.printVoltage();
   }
 
   /* Used for joystick/xbox axis actions. */

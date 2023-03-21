@@ -5,6 +5,8 @@ import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +25,7 @@ public class ArmOld extends SubsystemBase {
     private static final ArmFeedforward armFeedForward = new ArmFeedforward(0.081228,0.11788,4.8424, 0.076763);
     public static final SparkMaxAbsoluteEncoder GearboxEncoder = leaderMotor.getAbsoluteEncoder(Type.kDutyCycle);
     public static final CANCoder topEncoder = new CANCoder(7, "ctre");
+    public static final DigitalInput limitSwitch = new DigitalInput(1);
 
     private static double kP = .01; // 0000011903
     private static double kI = 0; // 0000010902
@@ -34,7 +37,7 @@ public class ArmOld extends SubsystemBase {
     private static double minVel = -0.1;
     private static double maxVel = 0.1;
     private static double maxAccel = 0;
-    private static double minPos = -72;
+    private static double minPos = -78;
     private static double maxPos = 20;
     private static double angleCANOffset = 27.58;
 
@@ -52,7 +55,6 @@ public class ArmOld extends SubsystemBase {
         initDashboard();
         followerMotor.follow(leaderMotor);
         armConfigAngleEncoder();
-        
     
         mainPIDMotor.setP(kP);
         mainPIDMotor.setI(kI);
@@ -121,11 +123,6 @@ private void armConfigAngleEncoder() {
 
         // button to toggle between velocity and smart motion modes
         //SmartDashboard.putBoolean("Mode", true);
-
-        //encoder value
-        double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
-        //SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber("Arm Angle", armAngle);
     }
     
     public void kick() {
@@ -139,8 +136,9 @@ private void armConfigAngleEncoder() {
         // initDashboard();
         double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
         // SmartDashboard.putNumber("Rotation Encoder", topEncoder.getAbsolutePosition());
-        // SmartDashboard.putNumber("Arm Angle", armAngle);
-        // SmartDashboard.putBoolean("reachedMax", reachedMax);
+        SmartDashboard.putNumber("Arm Angle", armAngle);
+        SmartDashboard.putBoolean("reachedMax", reachedMax);
+        SmartDashboard.putBoolean("reachedMin", reachedMin);
 
         reachedMax = armAngle >= maxPos;
         reachedMin = armAngle <= minPos;
@@ -215,7 +213,7 @@ private void armConfigAngleEncoder() {
         }
     }
     public void simpleArmNegativeMovement(BooleanSupplier min){
-        if(!min.getAsBoolean()) {
+        if(!min.getAsBoolean() && limitSwitch.get()) {
             leaderMotor.set(-0.45);
         } else {
             stopMovement();
@@ -223,14 +221,30 @@ private void armConfigAngleEncoder() {
     }
 
     public void magicButton(double position) {
-        double tollerance = 2;
-            if (armAngle > position + tollerance) {
-            leaderMotor.set(0.2);
-            } else if (armAngle < position - tollerance) {
-            leaderMotor.set(-0.2);
-            } else {
-                stopMovement();
+        Thread thread = new Thread(() -> {
+            while (true) {
+                double tolerance = 2;
+                double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
+
+                if (!limitSwitch.get()) {
+                    stopMovement();
+                    break;
+                }
+                if (armAngle >= 20) {
+                    stopMovement();
+                    break;
+                }
+                if (armAngle > position + tolerance) {
+                    leaderMotor.set(-0.45);
+                } else if (armAngle < position - tolerance) {
+                    leaderMotor.set(0.45);
+                } else {
+                    stopMovement();
+                    break;
+                }
             }
+        });
+        thread.start();
     }
     public void stopMovement() {
         leaderMotor.set(0.01);
