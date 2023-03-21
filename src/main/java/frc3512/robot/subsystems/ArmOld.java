@@ -24,7 +24,7 @@ public class ArmOld extends SubsystemBase {
     public static final SparkMaxPIDController mainPIDMotor = leaderMotor.getPIDController();
     private static final ArmFeedforward armFeedForward = new ArmFeedforward(0.081228,0.11788,4.8424, 0.076763);
     public static final SparkMaxAbsoluteEncoder GearboxEncoder = leaderMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    public static final CANCoder topEncoder = new CANCoder(7, "ctre");
+    public static final CANCoder topEncoder = new CANCoder(7);
     public static final DigitalInput limitSwitch = new DigitalInput(1);
 
     private static double kP = .01; // 0000011903
