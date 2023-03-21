@@ -36,7 +36,7 @@ public class ArmOld extends SubsystemBase {
     private static double minVel = -0.1;
     private static double maxVel = 0.1;
     private static double maxAccel = 0;
-    private static double minPos = -78;
+    private static double minPos = -79;
     private static double maxPos = 20;
     private static double angleCANOffset = 27.58;
 
