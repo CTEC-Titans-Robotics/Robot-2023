@@ -44,7 +44,7 @@ public class Intake extends SubsystemBase {
         if(m_isIntaking && m_timer.hasElapsed(.25) && m_intake.getOutputCurrent() >= 80) {
             m_isHeld = true;
             m_isIntaking = false;
-            m_intake.set(-0.1);
+            m_intake.set(-0.15);
             m_timer.stop();
             m_timer.reset();
         }

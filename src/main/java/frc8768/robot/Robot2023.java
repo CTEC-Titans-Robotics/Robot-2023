@@ -19,7 +19,7 @@ public class Robot2023 {
 
   public Intake intake = new Intake();
   public Autos autos = new Autos(swerve);
-  public ArmExtension extension = new ArmExtension();
+  public ArmExtensionWPI extension = new ArmExtensionWPI();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -55,7 +55,7 @@ public class Robot2023 {
     // .debounce(0.1, Debouncer.DebounceType.kBoth)
     // .onTrue(new InstantCommand(swerve::lock));
 
-    m_appendageController.a().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.drive()));
+    m_appendageController.rightTrigger(0.1).debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.drive()));
     // m_appendageController.x().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.out()));
     // m_appendageController.y()
     //         .debounce(0.1, Debouncer.DebounceType.kBoth)
@@ -99,6 +99,7 @@ public class Robot2023 {
 
     m_armo.periodic();
     intake.periodic();
+    extension.periodic();
 
     if(m_appendageController.getHID().getRightY() > 0.05) {
       extension.negativeMovement(extension.reachedMinSup);
