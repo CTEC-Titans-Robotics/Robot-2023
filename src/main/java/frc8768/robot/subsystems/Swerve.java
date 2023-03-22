@@ -108,7 +108,7 @@ public class Swerve extends SubsystemBase {
             rotationCorrection = m_headingController.updateRotationCorrection(m_heading, rotationCorrection);
           }
 
-          
+          // rotationCorrection = 0;
           // SmartDashboard.putNumber("rotation correction", rotationCorrection);
           // SmartDashboard.putNumber("rotation heading", m_heading.getDegrees());
           drive(
@@ -116,17 +116,23 @@ public class Swerve extends SubsystemBase {
                   .times(swerve.swerveController.config.maxSpeed),
               (rotationVal * swerve.swerveController.config.maxAngularVelocity) + rotationCorrection,
               true,
-              true);
+              false);
         })
         .withName("TeleopSwerve");
   }
 
   public void setSnapHeading(double heading){
+    m_snapEnabled = true;
       m_snapController.setTargetHeading(heading);
   }
 
   public Rotation2d254 getSnapHeading(){
       return m_snapController.getTargetHeading();
+  }
+
+  public void disableSnap(){
+    m_snapEnabled = false;
+    m_snapController.setTargetHeading(180);
   }
 
   public void drive(
