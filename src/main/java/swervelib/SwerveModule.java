@@ -119,12 +119,12 @@ public class SwerveModule {
         new SwerveModuleState2(
             simpleState.speedMetersPerSecond, simpleState.angle, desiredState.omegaRadPerSecond);
 
-    SmartDashboard.putNumber(
-        "Optimized " + moduleNumber + " Speed Setpoint: ", desiredState.speedMetersPerSecond);
-    SmartDashboard.putNumber(
-        "Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
-    SmartDashboard.putNumber(
-        "Module " + moduleNumber + " Omega: ", Math.toDegrees(desiredState.omegaRadPerSecond));
+    // SmartDashboard.putNumber(
+    //     "Optimized " + moduleNumber + " Speed Setpoint: ", desiredState.speedMetersPerSecond);
+    // SmartDashboard.putNumber(
+    //     "Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
+    // SmartDashboard.putNumber(
+    //     "Module " + moduleNumber + " Omega: ", Math.toDegrees(desiredState.omegaRadPerSecond));
 
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / configuration.maxSpeed;
@@ -198,7 +198,7 @@ public class SwerveModule {
     } else {
       return simModule.getPosition();
     }
-    SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
+    // SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
     return new SwerveModulePosition(position, azimuth);
   }
 
