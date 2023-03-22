@@ -16,8 +16,8 @@ public class SnapController {
 
     private SynchronousPIDF pidControllerLargeError, pidControllerSmallError;
     public SnapController() {
-        pidControllerLargeError = new SynchronousPIDF(0.00045, 0.0, 0.009, 0.0);
-        pidControllerSmallError = new SynchronousPIDF(0.0003, 0.0, 0.005, 0.0);
+        pidControllerLargeError = new SynchronousPIDF(0.00045 * .0001, 0.0, 0.009 * .0001, 0.0);
+        pidControllerSmallError = new SynchronousPIDF(0.0003 * .0001, 0.0, 0.005 * .0001, 0.0);
         maxSmallError = 20;
     }
 
