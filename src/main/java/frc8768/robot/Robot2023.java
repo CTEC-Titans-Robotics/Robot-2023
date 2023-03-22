@@ -60,7 +60,7 @@ public class Robot2023 {
     // m_appendageController.y()
     //         .debounce(0.1, Debouncer.DebounceType.kBoth)
     //         .onTrue((new InstantCommand(() -> intake.stopMovement())));
-    m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
+    //m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
     m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(-62)));
     m_appendageController.povLeft().onTrue(new InstantCommand(() -> m_armo.magicButton(-4.464765624999998)));
 
