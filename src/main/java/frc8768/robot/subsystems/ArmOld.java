@@ -206,14 +206,14 @@ private void armConfigAngleEncoder() {
 
     public void simpleArmPositiveMovement(BooleanSupplier max){
         if(!max.getAsBoolean()) {
-            leaderMotor.set(0.45);
+            leaderMotor.set(0.325);
         } else {
             stopMovement();
         }
     }
     public void simpleArmNegativeMovement(BooleanSupplier min){
         if(!min.getAsBoolean() && limitSwitch.get()) {
-            leaderMotor.set(-0.45);
+            leaderMotor.set(-0.2);
         } else {
             stopMovement();
         }

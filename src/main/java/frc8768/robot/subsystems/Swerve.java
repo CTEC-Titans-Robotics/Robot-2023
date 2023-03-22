@@ -86,8 +86,8 @@ public class Swerve extends SubsystemBase {
 
           translationVal= Math.pow(translationVal, 3);
           strafeVal= Math.pow(strafeVal, 3);
-          if (Math.hypot(translationVal, strafeVal) >= 0.5) {
-            rotationVal *= .05;
+          if (Math.hypot(translationVal, strafeVal) >= 0.2) {
+            rotationVal *= .25;
           }
           else {
             rotationVal= Math.pow(rotationVal, 3);

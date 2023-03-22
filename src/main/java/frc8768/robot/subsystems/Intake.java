@@ -76,7 +76,7 @@ public class Intake extends SubsystemBase {
             m_isExhausting = true;
             m_timer.reset();
             m_timer.start();
-            m_intake.set(0.75);
+            m_intake.set(0.5);
         }
     }
 
