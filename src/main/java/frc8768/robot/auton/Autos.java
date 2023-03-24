@@ -43,11 +43,11 @@ public final class Autos {
             swerve);
 
     autonChooser = new SendableChooser<>();
-    autonChooser.setDefaultOption("No-op", new InstantCommand());
+    autonChooser.addOption("No-op", new InstantCommand());
     autonChooser.addOption("Left Side Platform", leftSidePlatform());
     autonChooser.addOption("Left Side Community", leftSideCommunity());
     autonChooser.addOption("Right Side Platform", rightSidePlatform());
-    autonChooser.addOption("Right Side Community", rightSideCommunity());
+    autonChooser.setDefaultOption("Right Side Community", rightSideCommunity());
     autonChooser.addOption("Center Platform", centerPlatform());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);

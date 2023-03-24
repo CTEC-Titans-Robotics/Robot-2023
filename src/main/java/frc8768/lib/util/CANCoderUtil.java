@@ -25,14 +25,14 @@ public class CANCoderUtil {
    */
   public static void setCANCoderBusUsage(CANCoder cancoder, CANCoderUsage usage) {
     if (usage == CANCoderUsage.kAll) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10);
+      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 20);
+      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 20);
     } else if (usage == CANCoderUsage.kSensorDataOnly) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
+      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 20);
       cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 200);
     } else if (usage == CANCoderUsage.kFaultsOnly) {
       cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 200);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10);
+      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 20);
     } else if (usage == CANCoderUsage.kMinimal) {
       cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 200);
       cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 200);

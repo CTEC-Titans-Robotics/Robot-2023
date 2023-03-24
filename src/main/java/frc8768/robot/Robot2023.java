@@ -31,6 +31,7 @@ public class Robot2023 {
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
   private final CommandXboxController m_appendageController =
       new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
+  private final XboxController appendageController = new XboxController(Constants.OperatorConstants.appendageControllerPort);
   
 
   public void setMotorBrake(boolean brake) {
@@ -61,9 +62,6 @@ public class Robot2023 {
     //         .debounce(0.1, Debouncer.DebounceType.kBoth)
     //         .onTrue((new InstantCommand(() -> intake.stopMovement())));
     m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
-    m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(-62)));
-    m_appendageController.povUp().onTrue(new InstantCommand(() -> m_armo.magicButton(-19)));
-
     // m_driverController.povLeft().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(270)));
     // m_driverController.povRight().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(90)));
     // m_driverController.povUp().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(0)));
@@ -108,6 +106,14 @@ public class Robot2023 {
     m_armo.periodic();
     intake.periodic();
     extension.periodic();
+
+    if(m_appendageController.getHID().getPOV() == 180) {
+      m_armo.magicButton(-62);
+    }
+
+    if(m_appendageController.getHID().getPOV() == 0) {
+      m_armo.magicButton(-19);
+    }
 
     if(m_appendageController.getHID().getRightY() > 0.05) {
       extension.negativeMovement(extension.reachedMinSup);

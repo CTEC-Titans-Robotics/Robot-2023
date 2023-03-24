@@ -183,9 +183,9 @@ public class SwerveDrive {
       // SmartDashboard.putNumber(
       //     "Module " + module.moduleNumber + " Speed Setpoint: ",
       //     desiredStates[module.moduleNumber].speedMetersPerSecond);
-      // SmartDashboard.putNumber(
-      //     "Module " + module.moduleNumber + " Angle Setpoint: ",
-      //     desiredStates[module.moduleNumber].angle.getDegrees());
+      SmartDashboard.putNumber(
+          "Module " + module.moduleNumber + " Angle Setpoint: ",
+          desiredStates[module.moduleNumber].angle.getDegrees());
     }
   }
 

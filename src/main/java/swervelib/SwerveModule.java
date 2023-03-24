@@ -198,7 +198,7 @@ public class SwerveModule {
     } else {
       return simModule.getPosition();
     }
-    // SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
+    SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
     return new SwerveModulePosition(position, azimuth);
   }
 

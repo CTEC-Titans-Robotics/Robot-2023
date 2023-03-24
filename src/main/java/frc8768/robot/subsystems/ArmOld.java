@@ -221,7 +221,10 @@ private void armConfigAngleEncoder() {
 
     public void magicButton(double position) {
         Thread thread = new Thread(() -> {
+            Timer time = new Timer();
+            time.start(); 
             while (true) {
+                double runtime = 2;
                 double tolerance = 4;
                 double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
 
@@ -233,11 +236,12 @@ private void armConfigAngleEncoder() {
                     stopMovement();
                     break;
                 }
-                if (armAngle > position + tolerance) {
+                if (armAngle > position + tolerance && time.get() < runtime ) {
                     leaderMotor.set(-0.55);
-                } else if (armAngle < position - tolerance) {
+                } else if (armAngle < position - tolerance && time.get() < runtime) {
                     leaderMotor.set(0.55);
                 } else {
+                    time.stop();
                     stopMovement();
                     break;
                 }

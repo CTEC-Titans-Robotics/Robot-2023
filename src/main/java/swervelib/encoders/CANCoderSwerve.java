@@ -60,8 +60,8 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder {
     canCoderConfiguration.initializationStrategy =
         SensorInitializationStrategy.BootToAbsolutePosition;
     canCoderConfiguration.sensorTimeBase = SensorTimeBase.PerSecond;
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
-    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 200);
+    //encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 20);
+    //encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 20);
     encoder.configAllSettings(canCoderConfiguration);
   }
 
