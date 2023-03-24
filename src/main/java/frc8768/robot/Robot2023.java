@@ -60,15 +60,15 @@ public class Robot2023 {
     // m_appendageController.y()
     //         .debounce(0.1, Debouncer.DebounceType.kBoth)
     //         .onTrue((new InstantCommand(() -> intake.stopMovement())));
-    //m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
+    m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
     m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(-62)));
-    m_appendageController.povLeft().onTrue(new InstantCommand(() -> m_armo.magicButton(-4.464765624999998)));
+    m_appendageController.povUp().onTrue(new InstantCommand(() -> m_armo.magicButton(-19)));
 
-    m_driverController.povLeft().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(270)));
-    m_driverController.povRight().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(90)));
-    m_driverController.povUp().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(0)));
-    m_driverController.povDown().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(180)));
-    m_driverController.rightStick().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.disableSnap()));
+    // m_driverController.povLeft().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(270)));
+    // m_driverController.povRight().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(90)));
+    // m_driverController.povUp().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(0)));
+    // m_driverController.povDown().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(180)));
+    // m_driverController.rightStick().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.disableSnap()));
 
 
 

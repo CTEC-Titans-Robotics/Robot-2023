@@ -222,7 +222,7 @@ private void armConfigAngleEncoder() {
     public void magicButton(double position) {
         Thread thread = new Thread(() -> {
             while (true) {
-                double tolerance = 2;
+                double tolerance = 4;
                 double armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
 
                 if (!limitSwitch.get()) {
@@ -234,9 +234,9 @@ private void armConfigAngleEncoder() {
                     break;
                 }
                 if (armAngle > position + tolerance) {
-                    leaderMotor.set(-0.45);
+                    leaderMotor.set(-0.55);
                 } else if (armAngle < position - tolerance) {
-                    leaderMotor.set(0.45);
+                    leaderMotor.set(0.55);
                 } else {
                     stopMovement();
                     break;
