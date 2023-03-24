@@ -66,6 +66,7 @@ public class Swerve extends SubsystemBase {
     m_snapEnabled = false;
   }
 
+  double hypot;
   public Command drive(
       DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
     return run(() -> {
@@ -86,16 +87,20 @@ public class Swerve extends SubsystemBase {
 
           translationVal= Math.pow(translationVal, 3);
           strafeVal= Math.pow(strafeVal, 3);
-          if (Math.hypot(translationVal, strafeVal) >= 0.2) {
+          hypot = Math.hypot(translationVal, strafeVal);
+          if (hypot >= 0.2) {
             rotationVal *= .25;
           }
           else {
-            rotationVal= Math.pow(rotationVal, 3);
+            rotationVal = Math.pow(rotationVal, 3);
           }
 
           double rotationCorrection = 0;
           m_heading = getGyroYaw();
-          if (Math.abs(rotationVal) != 0) { // this check could be made more accurate with a bool and counter
+          if(Math.hypot(hypot, rotationVal) < 0.05) {
+            m_headingController.setTargetHeading(m_heading.getDegrees());
+            rotationCorrection = 0;
+          } else if (Math.abs(rotationVal) != 0) { // this check could be made more accurate with a bool and counter
             m_headingController.setTargetHeading(m_heading.getDegrees());
             rotationCorrection = m_headingController.updateRotationCorrection(m_heading, rotationCorrection);
           }
