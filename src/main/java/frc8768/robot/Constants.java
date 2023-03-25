@@ -134,8 +134,8 @@ public final class Constants {
   /** Constants revolving around auton modes. */
   public static final class AutonConstants {
 
-    public static final double maxVelocity = 4.0;
-    public static final double maxAcceleration = 3.0;
+    public static final double maxVelocity = 2.0;
+    public static final double maxAcceleration = 1.0;
 
     public static final PathConstraints constraints =
         new PathConstraints(AutonConstants.maxVelocity, AutonConstants.maxAcceleration);
