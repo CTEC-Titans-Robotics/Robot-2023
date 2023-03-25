@@ -17,7 +17,7 @@ public class Intake extends SubsystemBase {
     private Timer m_timer;
 
     public Intake() {
-        m_intake = new CANSparkMax(35, MotorType.kBrushless);
+        m_intake = new CANSparkMax(18, MotorType.kBrushless);
         m_intake.restoreFactoryDefaults();
         // m_intake.setSecondaryCurrentLimit(15);
 

@@ -5,6 +5,8 @@ import edu.wpi.first.math.util.Units;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import edu.wpi.first.wpilibj.Timer;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.parser.json.ControllerPropertiesJson;
@@ -93,6 +95,8 @@ public class SwerveParser {
    * @return {@link SwerveDrive} instance.
    */
   public SwerveDrive createSwerveDrive() {
+    Timer.delay(2);
+
     double maxSpeedMPS = Units.feetToMeters(swerveDriveJson.maxSpeed);
     SwerveModuleConfiguration[] moduleConfigurations =
         new SwerveModuleConfiguration[moduleJsons.length];

@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.BooleanSupplier;
 
 public class ArmExtensionWPI extends SubsystemBase {
-    public static final CANSparkMax extension = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
+    public static final CANSparkMax extension = new CANSparkMax(17, CANSparkMaxLowLevel.MotorType.kBrushless);
     public static final DutyCycleEncoder m_encoder = new DutyCycleEncoder(9);
     //public static final Encoder relavitveEncoder = new Encoder(8, 9);
 

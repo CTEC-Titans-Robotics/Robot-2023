@@ -18,12 +18,12 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class ArmOld extends SubsystemBase {
-    public static final CANSparkMax followerMotor = new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
-    public static final CANSparkMax leaderMotor = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
+    public static final CANSparkMax followerMotor = new CANSparkMax(16, CANSparkMaxLowLevel.MotorType.kBrushless);
+    public static final CANSparkMax leaderMotor = new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
     public static final SparkMaxPIDController mainPIDMotor = leaderMotor.getPIDController();
     private static final ArmFeedforward armFeedForward = new ArmFeedforward(0.081228,0.11788,4.8424, 0.076763);
     public static final SparkMaxAbsoluteEncoder GearboxEncoder = leaderMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    public static final CANCoder topEncoder = new CANCoder(7);
+    public static final CANCoder topEncoder = new CANCoder(19);
     public static final DigitalInput limitSwitch = new DigitalInput(1);
 
     private static double kP = .01; // 0000011903
@@ -36,7 +36,7 @@ public class ArmOld extends SubsystemBase {
     private static double minVel = -0.1;
     private static double maxVel = 0.1;
     private static double maxAccel = 0;
-    private static double minPos = -78;
+    private static double minPos = -79;
     private static double maxPos = 20;
     private static double angleCANOffset = 27.58;
 
@@ -206,14 +206,14 @@ private void armConfigAngleEncoder() {
 
     public void simpleArmPositiveMovement(BooleanSupplier max){
         if(!max.getAsBoolean()) {
-            leaderMotor.set(0.325);
+            leaderMotor.set(-0.325);
         } else {
             stopMovement();
         }
     }
     public void simpleArmNegativeMovement(BooleanSupplier min){
         if(!min.getAsBoolean() && limitSwitch.get()) {
-            leaderMotor.set(-0.2);
+            leaderMotor.set(0.2);
         } else {
             stopMovement();
         }
@@ -237,9 +237,9 @@ private void armConfigAngleEncoder() {
                     break;
                 }
                 if (armAngle > position + tolerance && time.get() < runtime ) {
-                    leaderMotor.set(-0.55);
-                } else if (armAngle < position - tolerance && time.get() < runtime) {
                     leaderMotor.set(0.55);
+                } else if (armAngle < position - tolerance && time.get() < runtime) {
+                    leaderMotor.set(-0.55);
                 } else {
                     time.stop();
                     stopMovement();
@@ -250,7 +250,7 @@ private void armConfigAngleEncoder() {
         thread.start();
     }
     public void stopMovement() {
-        leaderMotor.set(0.01);
+        leaderMotor.set(-0.01);
     }
 
     public Command stopMovementCommand() {
