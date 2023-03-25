@@ -1,6 +1,7 @@
 package frc8768.robot.auton;
 
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc8768.robot.Constants;
 import frc8768.robot.subsystems.Swerve;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @SuppressWarnings("unused")
@@ -105,6 +107,11 @@ public final class Autos {
 
   public Command centerPlatform() {
     return autonBuilder.fullAuto(
-            PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
+            (PathPlannerTrajectory) PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints).
+            concatenate(PathPlanner.loadPath("Center Platform 2", Constants.AutonConstants.constraints))).andThen(new BalanceChassisCommand(swerve));
+  }
+  public Command otherCenterPlatformPath(){
+    return autonBuilder.fullAuto(
+            (PathPlannerTrajectory) PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints)).andThen(new backBalanceChassisCommand(swerve));
   }
 }
