@@ -107,11 +107,6 @@ public final class Autos {
 
   public Command centerPlatform() {
     return autonBuilder.fullAuto(
-            (PathPlannerTrajectory) PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints).
-            concatenate(PathPlanner.loadPath("Center Platform 2", Constants.AutonConstants.constraints))).andThen(new BalanceChassisCommand(swerve));
-  }
-  public Command otherCenterPlatformPath(){
-    return autonBuilder.fullAuto(
-            (PathPlannerTrajectory) PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints)).andThen(new backBalanceChassisCommand(swerve));
+            PathPlanner.loadPath("Center Platform", Constants.AutonConstants.constraints)).andThen(new BalanceChassisCommand(swerve));
   }
 }
