@@ -83,14 +83,14 @@ public class ArmExtensionWPI extends SubsystemBase {
           }
     public void positiveMovement(BooleanSupplier max){
         if(!max.getAsBoolean()) {
-            extension.set(0.25);
+            extension.set(0.1);
         } else {
             stopMovement();
         }
     }
     public void negativeMovement(BooleanSupplier min){
         if(!min.getAsBoolean()) {
-            extension.set(-0.25);
+            extension.set(-0.1);
         } else {
             stopMovement();
         }

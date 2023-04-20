@@ -26,7 +26,7 @@ public class BalanceChassisCommand extends CommandBase {
 		double vxMeters = MathUtil.clamp(this.pid.calculate(this.swerve.getGyroRot().getDegrees()),
 				-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
 
-		this.swerve.drive(new Translation2d(-vxMeters, 0), 0, true, false);
+		this.swerve.drive(new Translation2d(-vxMeters, 0), 0, true, false, true);
 	}
 
 	@Override

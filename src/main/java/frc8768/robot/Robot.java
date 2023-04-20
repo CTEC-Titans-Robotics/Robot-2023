@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
         levelOut = m_robot.autos.levelOut();
       } else {
         if(levelOut.isFinished()) {
-          m_robot.swerve.drive(new Translation2d(0, 0), 0, true, false);
+          m_robot.swerve.drive(new Translation2d(0, 0), 0, true, false, true);
           return;
         }
       }

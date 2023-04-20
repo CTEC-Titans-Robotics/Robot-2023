@@ -51,6 +51,7 @@ public final class Autos {
     autonChooser.addOption("Right Side Platform", rightSidePlatform());
     autonChooser.setDefaultOption("Right Side Community", rightSideCommunity());
     autonChooser.addOption("Center Platform", centerPlatform());
+    autonChooser.addOption("Test Right Side Community", testRightSide());
 
     SmartDashboard.putData("Auton Chooser", autonChooser);
   }
@@ -68,6 +69,11 @@ public final class Autos {
   public Command leftSidePlatform() {
     return autonBuilder.fullAuto(
         PathPlanner.loadPath("Left Side Platform", Constants.AutonConstants.constraints));
+  }
+
+  public Command testRightSide(){
+    return autonBuilder.fullAuto(
+            PathPlanner.loadPath("Test Right Side Community ", Constants.AutonConstants.constraints));
   }
 
   public Command levelOut() {

@@ -18,10 +18,13 @@ public class HeadingController {
     public HeadingController() {
         // pidControllerLargeError = new SynchronousPIDF(0.00041, 0.0, 0.003, 0.0);
         // pidControllerSmallError = new SynchronousPIDF(0.0003, 0.0, 0.005, 0.0);
+        //pidControllerLargeError = new SynchronousPIDF(0.00041 * .0001, 0.0, 0.003 * .0001, 0.0);
         pidControllerLargeError = new SynchronousPIDF(0.00041 * .0001, 0.0, 0.003 * .0001, 0.0);
         // pidControllerLargeError.setOutputRange(-.1, .1);
         // pidControllerSmallError.setOutputRange(-.1, .1);
+        //pidControllerSmallError = new SynchronousPIDF(0.0003 * .0001, 0.0, 0.005 * .0001, 0.0);
         pidControllerSmallError = new SynchronousPIDF(0.0003 * .0001, 0.0, 0.005 * .0001, 0.0);
+
 
         maxSmallError = 20;
     }

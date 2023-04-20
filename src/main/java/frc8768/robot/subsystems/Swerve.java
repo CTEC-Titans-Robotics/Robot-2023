@@ -84,43 +84,13 @@ public class Swerve extends SubsystemBase {
               rotationLimiter.calculate(
                   MathUtil.applyDeadband(
                       rotationSup.getAsDouble(), 0.1));
-
-          translationVal= Math.pow(translationVal, 3);
-          strafeVal= Math.pow(strafeVal, 3);
-          hypot = Math.hypot(translationVal, strafeVal);
-          if (hypot >= 0.2) {
-            rotationVal *= .25;
-          }
-          else {
-            rotationVal = Math.pow(rotationVal, 3);
-          }
-
-          double rotationCorrection = 0;
-          m_heading = getGyroYaw();
-          if(Math.hypot(hypot, rotationVal) < 0.05) {
-            m_headingController.setTargetHeading(m_heading.getDegrees());
-            rotationCorrection = 0;
-          } else if (Math.abs(rotationVal) != 0) { // this check could be made more accurate with a bool and counter
-            m_headingController.setTargetHeading(m_heading.getDegrees());
-            rotationCorrection = m_headingController.updateRotationCorrection(m_heading, rotationCorrection);
-          }
-          else if (m_snapEnabled) {
-            m_headingController.setTargetHeading(m_heading.getDegrees());
-            rotationCorrection = m_snapController.updateRotationCorrection(m_heading, Timer.getFPGATimestamp());
-            // timer value is not correct?
-          } 
-          else {
-            rotationCorrection = m_headingController.updateRotationCorrection(m_heading, rotationCorrection);
-          }
-
-          // rotationCorrection = 0;
-          // SmartDashboard.putNumber("rotation correction", rotationCorrection);
-          // SmartDashboard.putNumber("rotation heading", m_heading.getDegrees());
+          
           drive(
               new Translation2d(translationVal, strafeVal)
                   .times(swerve.swerveController.config.maxSpeed),
-              (rotationVal * swerve.swerveController.config.maxAngularVelocity) + rotationCorrection,
+              (rotationVal * swerve.swerveController.config.maxAngularVelocity),
               true,
+              false,
               false);
         })
         .withName("TeleopSwerve");
@@ -141,8 +111,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public void drive(
-      Translation2d translationVal, double rotationVal, boolean fieldRelative, boolean openLoop) {
-    swerve.drive(translationVal, rotationVal, fieldRelative, openLoop);
+      Translation2d translationVal, double rotationVal, boolean fieldRelative, boolean openLoop, boolean headingCorrection) {
+    swerve.drive(translationVal, rotationVal, fieldRelative, openLoop, headingCorrection);
   }
 
   public void setChassisSpeeds(ChassisSpeeds speeds) {
@@ -155,10 +125,6 @@ public class Swerve extends SubsystemBase {
 
   public Rotation2d getGyroRot() {
     return swerve.getRoll();
-  }
-
-  public Rotation2d254 getGyroYaw() {
-    return swerve.getYaw254();
   }
 
   public void zeroGyro() {
