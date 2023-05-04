@@ -13,159 +13,24 @@ import edu.wpi.first.math.filter.Debouncer;
 
 public class Robot2023 {
   // Robot subsystems
-  protected Swerve swerve = new Swerve();
 
-   public ArmRotation m_armo = new ArmRotation();
-
-  public Intake intake = new Intake();
-  public Autos autos = new Autos(swerve);
-  public ArmExtension extension = new ArmExtension();
-
-  // Driver Control
-  private final int translationAxis = XboxController.Axis.kLeftY.value;
-  private final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private final int rotationAxis = XboxController.Axis.kRightX.value;
+  Claw claw = new Claw();
 
   // Joysticks
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController m_commandDriverController =
       new CommandXboxController(Constants.OperatorConstants.driverControllerPort);
-  private final CommandXboxController m_appendageController =
-      new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);
-  private final XboxController appendageController = new XboxController(Constants.OperatorConstants.appendageControllerPort);
-  
-
-  public void setMotorBrake(boolean brake) {
-    swerve.setMotorBrake(brake);
-  }
-
+  private final CommandXboxController m_commandAppendageController =
+      new CommandXboxController(Constants.OperatorConstants.appendageControllerPort);  
 
   /** Used for defining button actions. */
   public void configureButtonBindings() {
-    m_driverController.b().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.zeroGyro()));
-    m_driverController
-            .leftTrigger()
-            .debounce(0.1, Debouncer.DebounceType.kBoth)
-            .onTrue(new InstantCommand(swerve::tortoiseMode));
-    m_driverController
-            .leftTrigger()
-            .debounce(0.1, Debouncer.DebounceType.kRising)
-            .onFalse(new InstantCommand(swerve::hareMode));
     
-    // m_driverController
-    // .x()
-    // .debounce(0.1, Debouncer.DebounceType.kBoth)
-    // .onTrue(new InstantCommand(swerve::lock));
-
-    m_appendageController.rightTrigger(0.1).debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.drive()));
-    // m_appendageController.x().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> intake.out()));
-    // m_appendageController.y()
-    //         .debounce(0.1, Debouncer.DebounceType.kBoth)
-    //         .onTrue((new InstantCommand(() -> intake.stopMovement())));
-    m_appendageController.y().debounce(0.25, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> extension.zeroingProtocol()));
-    // m_driverController.povLeft().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(270)));
-    // m_driverController.povRight().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(90)));
-    // m_driverController.povUp().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(0)));
-    // m_driverController.povDown().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.setSnapHeading(180)));
-    // m_driverController.rightStick().debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> swerve.disableSnap()));
-
-
-
-//    m_appendageController.povUp().onTrue(new InstantCommand(() -> m_armo.magicButton(60)));
-//    m_appendageController.povDown().onTrue(new InstantCommand(() -> m_armo.magicButton(45)));
-
-
-//     m_appendageController
-//       .a()
-//       .debounce(0.1, Debouncer.DebounceType.kBoth)
-//       .onTrue(m_arm.moveTo(60));
-//
-//     m_appendageController
-//     .x()
-//     .debounce(0.1, Debouncer.DebounceType.kBoth)
-//     .onTrue(m_arm.moveTo(50));
-//    m_appendageController
-//            .y()
-//            .debounce(0.1, Debouncer.DebounceType.kBoth)
-//            .onTrue(m_arm.moveTo(70));
-
+    m_commandAppendageController.rightTrigger(0.1).debounce(0.1, Debouncer.DebounceType.kBoth).onTrue(new InstantCommand(() -> {}));
+   
   }
 
-  public void periodic(
-
-  ) {
-    // if(appendageXbox.getAButton()) {
-    //   m_arm.setLow();
-    // }
-    // if(appendageXbox.getXButton()) {
-    //   m_arm.setMid();
-    // }
-    // if(appendageXbox.getYButton()) {
-    //   m_arm.setHigh();
-    // }
-
-    m_armo.periodic();
-    intake.periodic();
-    extension.periodic();
-
-    if(m_appendageController.getHID().getPOV() == 180) {
-      m_armo.magicButton(-62);
-    }
-
-    if(m_appendageController.getHID().getPOV() == 0) {
-      m_armo.magicButton(-19);
-    }
-
-    if(m_appendageController.getHID().getRightY() > 0.05) {
-      extension.negativeMovement(extension.reachedMinSup);
-    } else if(m_appendageController.getHID().getRightY() < -0.05) {
-      extension.positiveMovement(extension.reachedMaxSup);
-    } else {
-      extension.stopMovement();
-    }
-
-    if(m_appendageController.getHID().getLeftY() > 0.05) {
-      m_armo.simpleArmNegativeMovement(m_armo.reachedMinSup);
-    } else if(m_appendageController.getHID().getLeftY() < -0.05) {
-      m_armo.simpleArmPositiveMovement(m_armo.reachedMaxSup);
-    } else {
-      m_armo.stopMovement();
-    }
-
-  }
-
-  /* Used for joystick/xbox axis actions. */
-  public void configureAxisActions() {
-    swerve.setDefaultCommand(
-        swerve.drive(
-            () -> m_driverController.getRawAxis(translationAxis),
-            () -> m_driverController.getRawAxis(strafeAxis),
-            () -> m_driverController.getRawAxis(rotationAxis)));
-  }
-
-  public void armTest() {
-    extension.zeroingProtocol();
-    //m_arm.zeroingProtocol();
-  }
-
-  public void balanceTest() {
-    new BalanceChassisCommand(swerve).execute();
-  }
-
-  public void armPrint (){
-    // SmartDashboard.putNumber("Gearbox Throughbore", m_arm.getDistance());
-    // m_arm.setLow();
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autos.getSelected();
-  }
-
-  public void testPeriodic() {
-    // SmartDashboard.putNumber("Gyro Roll", swerve.getGyroRot().getDegrees());
+  public void periodic() {
+    
   }
 }
+
