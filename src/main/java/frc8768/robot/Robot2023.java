@@ -15,11 +15,11 @@ public class Robot2023 {
   // Robot subsystems
   protected Swerve swerve = new Swerve();
 
-   public ArmOld m_armo = new ArmOld();
+   public ArmRotation m_armo = new ArmRotation();
 
   public Intake intake = new Intake();
   public Autos autos = new Autos(swerve);
-  public ArmExtensionWPI extension = new ArmExtensionWPI();
+  public ArmExtension extension = new ArmExtension();
 
   // Driver Control
   private final int translationAxis = XboxController.Axis.kLeftY.value;

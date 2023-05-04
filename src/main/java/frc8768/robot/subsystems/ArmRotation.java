@@ -17,7 +17,7 @@ import frc8768.robot.Constants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class ArmOld extends SubsystemBase {
+public class ArmRotation extends SubsystemBase {
     public static final CANSparkMax followerMotor = new CANSparkMax(16, CANSparkMaxLowLevel.MotorType.kBrushless);
     public static final CANSparkMax leaderMotor = new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
     public static final SparkMaxPIDController mainPIDMotor = leaderMotor.getPIDController();
@@ -48,7 +48,7 @@ public class ArmOld extends SubsystemBase {
     
 
 
-    public ArmOld() {
+    public ArmRotation() {
         //SmartDashboard.putBoolean("zeroing init", false);
 
         initDashboard();
