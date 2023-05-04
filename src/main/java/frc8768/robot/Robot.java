@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
 
     m_robot.configureButtonBindings();
-    m_robot.configureAxisActions();
+    //m_robot.configureAxisActions();
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot
     // stop
@@ -83,91 +83,49 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robot.setMotorBrake(true);
-    disabledTimer.reset();
-    disabledTimer.start();
   }
 
   @Override
   public void disabledPeriodic() {
-    if (disabledTimer.hasElapsed(Constants.GeneralConstants.wheelLockTime)) {
-      m_robot.setMotorBrake(false);
-      disabledTimer.stop();
-    }
+    
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_robot.setMotorBrake(true);
-
-    // No arm?! :waaaa:
-    // m_robot.armTest();
-
-    m_autonomousCommand = m_robot.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+  
   }
 
   /** This function is called periodically during autonomous. */
   Command levelOut;
   @Override
   public void autonomousPeriodic() {
-    if(m_robot.autos.getSelected().getName().contains("Platform") && m_robot.autos.getSelected().isFinished()) {
-      if(levelOut == null) {
-        levelOut = m_robot.autos.levelOut();
-      } else {
-        if(levelOut.isFinished()) {
-          m_robot.swerve.drive(new Translation2d(0, 0), 0, true, false, true);
-          return;
-        }
-      }
-      levelOut.execute();
-    }
+    
   }
 
   @Override
   public void teleopInit() {
-    m_robot.setMotorBrake(true);
-
-    m_robot.armTest();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robot.periodic();
-    //m_robot.armPrint();
+      m_robot.periodic();
   }
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-    m_robot.balanceTest();
-    
-    try {
-      new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+   
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    m_robot.testPeriodic();
   }
 
   /** This function is called once when the robot is first started up. */
